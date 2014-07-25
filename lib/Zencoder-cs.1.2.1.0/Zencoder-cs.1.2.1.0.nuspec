@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>Zencoder-cs</id>
+    <version>1.2.1.0</version>
+    <authors>Chad Burggraf</authors>
+    <owners>Chad Burggraf</owners>
+    <licenseUrl>https://github.com/ChadBurggraf/zencoder-cs/blob/master/LICENSE.txt</licenseUrl>
+    <projectUrl>https://github.com/ChadBurggraf/zencoder-cs</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>A .NET C# client library for the zencoder.com API. Visit https://app.zencoder.com/docs for full API documentation.</description>
+    <releaseNotes />
+    <copyright>Copyright 2012 Chad Burggraf</copyright>
+    <tags>Zencoder</tags>
+  </metadata>
+</package>

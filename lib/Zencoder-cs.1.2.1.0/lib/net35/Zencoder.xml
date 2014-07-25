@@ -1,0 +1,3370 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Zencoder</name>
+    </assembly>
+    <members>
+        <member name="T:Zencoder.AccountDetailsRequest">
+            <summary>
+            Implements the account details request.
+            </summary>
+        </member>
+        <member name="T:Zencoder.Request`2">
+            <summary>
+            Base generic implementation of <see cref="T:Zencoder.Request"/>.
+            </summary>
+            <typeparam name="TRequest">The concrete <see cref="T:Zencoder.Request"/> implementor.</typeparam>
+            <typeparam name="TResponse">The corresponding <see cref="T:Zencoder.Response"/> implementor.</typeparam>
+        </member>
+        <member name="T:Zencoder.Request">
+            <summary>
+            Base class for API requests.
+            </summary>
+        </member>
+        <member name="M:Zencoder.Request.#ctor(Zencoder.Zencoder)">
+            <summary>
+            Initializes a new instance of the Request class.
+            </summary>
+            <param name="zencoder">The <see cref="T:Zencoder.Zencoder"/> service to create the request with.</param>
+        </member>
+        <member name="M:Zencoder.Request.#ctor(System.String,System.Uri)">
+            <summary>
+            Initializes a new instance of the Request class.
+            </summary>
+            <param name="apiKey">The API key to use when connecting to the service.</param>
+            <param name="baseUrl">The service base URL.</param>
+        </member>
+        <member name="P:Zencoder.Request.ApiKey">
+            <summary>
+            Gets or sets the API key to use when connecting to the service.
+            </summary>
+        </member>
+        <member name="P:Zencoder.Request.BaseUrl">
+            <summary>
+            Gets or sets the service base URL.
+            </summary>
+        </member>
+        <member name="P:Zencoder.Request.Url">
+            <summary>
+            Gets the concrete URL this request will call.
+            </summary>
+        </member>
+        <member name="P:Zencoder.Request.Verb">
+            <summary>
+            Gets the HTTP verb to use when making the request.
+            </summary>
+        </member>
+        <member name="M:Zencoder.Request`2.#ctor(Zencoder.Zencoder)">
+            <summary>
+            Initializes a new instance of the Request class.
+            </summary>
+            <param name="zencoder">The <see cref="T:Zencoder.Zencoder"/> service to create the request with.</param>
+        </member>
+        <member name="M:Zencoder.Request`2.#ctor(System.String,System.Uri)">
+            <summary>
+            Initializes a new instance of the Request class.
+            </summary>
+            <param name="apiKey">The API key to use when connecting to the service.</param>
+            <param name="baseUrl">The service base URL.</param>
+        </member>
+        <member name="M:Zencoder.Request`2.GetResponse">
+            <summary>
+            Gets the response to this request.
+            </summary>
+            <returns>The response to this request.</returns>
+        </member>
+        <member name="M:Zencoder.Request`2.GetResponseAsync(System.Action{`1})">
+            <summary>
+            Gets the response to this request asynchronously.
+            </summary>
+            <param name="callback">The callback to invoke when the response has been received.</param>
+        </member>
+        <member name="M:Zencoder.Request`2.ToJson">
+            <summary>
+            Serializes this instance to a JSON string.
+            </summary>
+            <returns>A JSON string.</returns>
+        </member>
+        <member name="M:Zencoder.Request`2.ToJson(System.IO.Stream)">
+            <summary>
+            Serializes this instance to JSON and writes it to the given stream.
+            </summary>
+            <param name="stream">The stream to write JSON data to.</param>
+        </member>
+        <member name="M:Zencoder.Request`2.CreateRequest">
+            <summary>
+            Creates an HTTP request from this instance's state.
+            </summary>
+            <returns>The created request.</returns>
+        </member>
+        <member name="M:Zencoder.Request`2.CreateResponse(System.Net.HttpWebResponse,System.Net.WebException)">
+            <summary>
+            Creates a <see cref="T:Zencoder.Response"/> from the given web response and possible exception.
+            </summary>
+            <param name="response">The response to create the <see cref="T:Zencoder.Response"/> from.</param>
+            <param name="ex">The exception that occurred, if applicable.</param>
+            <returns>The created response.</returns>
+        </member>
+        <member name="M:Zencoder.Request`2.ReadResponse(System.IO.Stream)">
+            <summary>
+            Reads any data from the response stream into a new <see cref="T:Zencoder.Response"/> instance.
+            </summary>
+            <param name="stream">The stream to read from.</param>
+            <returns>The created response.</returns>
+        </member>
+        <member name="M:Zencoder.Request`2.WriteRequestStream(System.IO.Stream)">
+            <summary>
+            Writes any data to the request stream for this instance.
+            </summary>
+            <param name="stream">The request stream to write to.</param>
+        </member>
+        <member name="M:Zencoder.Request`2.GetResponseAsync(System.Action{`1},System.Net.HttpWebRequest)">
+            <summary>
+            Gets the response to this request asynchronously.
+            </summary>
+            <param name="callback">The callback to invoke when the response has been received.</param>
+            <param name="request">The web request to get the response for.</param>
+        </member>
+        <member name="M:Zencoder.AccountDetailsRequest.#ctor(Zencoder.Zencoder)">
+            <summary>
+            Initializes a new instance of the AccountDetailsRequest class.
+            </summary>
+            <param name="zencoder">The <see cref="T:Zencoder.Zencoder"/> service to create the request with.</param>
+        </member>
+        <member name="M:Zencoder.AccountDetailsRequest.#ctor(System.String,System.Uri)">
+            <summary>
+            Initializes a new instance of the AccountDetailsRequest class.
+            </summary>
+            <param name="apiKey">The API key to use when connecting to the service.</param>
+            <param name="baseUrl">The service base URL.</param>
+        </member>
+        <member name="P:Zencoder.AccountDetailsRequest.Url">
+            <summary>
+            Gets the concrete URL this request will call.
+            </summary>
+        </member>
+        <member name="P:Zencoder.AccountDetailsRequest.Verb">
+            <summary>
+            Gets the HTTP verb to use when making the request.
+            </summary>
+        </member>
+        <member name="T:Zencoder.AccountDetailsResponse">
+            <summary>
+            Implements the account details response.
+            </summary>
+        </member>
+        <member name="T:Zencoder.Response`2">
+            <summary>
+            Base generic implementation of <see cref="T:Zencoder.Response"/>.
+            </summary>
+            <typeparam name="TRequest">The concrete <see cref="T:Zencoder.Request"/> implementor.</typeparam>
+            <typeparam name="TResponse">The corresponding <see cref="T:Zencoder.Response"/> implementor.</typeparam>
+        </member>
+        <member name="T:Zencoder.Response">
+            <summary>
+            Base class for API responses.
+            </summary>
+        </member>
+        <member name="M:Zencoder.Response.FromJson``2(System.String)">
+            <summary>
+            Creates a new <see cref="T:Zencoder.Response"/> instance from the given JSON string.
+            </summary>
+            <typeparam name="TRequest">The concrete <see cref="T:Zencoder.Request"/> implementor.</typeparam>
+            <typeparam name="TResponse">The corresponding <see cref="T:Zencoder.Response"/> implementor.</typeparam>
+            <param name="json">A string of JSON representing the response.</param>
+            <returns>A <see cref="T:Zencoder.Response"/>.</returns>
+        </member>
+        <member name="M:Zencoder.Response.FromJson``2(System.IO.Stream)">
+            <summary>
+            Creates a new <see cref="T:Zencoder.Response"/> instance from the JSON data in the given stream.
+            </summary>
+            <typeparam name="TRequest">The concrete <see cref="T:Zencoder.Request"/> implementor.</typeparam>
+            <typeparam name="TResponse">The corresponding <see cref="T:Zencoder.Response"/> implementor.</typeparam>
+            <param name="stream">The stream to create the response from.</param>
+            <returns>A <see cref="T:Zencoder.Response"/>.</returns>
+        </member>
+        <member name="M:Zencoder.Response.GetMethod``2(System.Type)">
+            <summary>
+            Gets a custom method to use when creating a <see cref="T:Zencoder.Response"/> from JSON.
+            </summary>
+            <typeparam name="TResponse">The concrete <see cref="T:Zencoder.Response"/> implementor.</typeparam>
+            <typeparam name="TAttr">The concrete <see cref="T:Zencoder.FromJsonAttribute"/> to use when searching for a method.</typeparam>
+            <param name="argumentType">The artument type to use when searching for a method.</param>
+            <returns>A custom <see cref="T:Zencoder.Response"/> creation method, or null if none was found.</returns>
+        </member>
+        <member name="P:Zencoder.Response.Errors">
+            <summary>
+            Gets or sets the error collection that was returned in the response.
+            </summary>
+        </member>
+        <member name="P:Zencoder.Response.RequestException">
+            <summary>
+            Gets the exception that occurred while making the request, if applicable.
+            </summary>
+        </member>
+        <member name="P:Zencoder.Response.StatusCode">
+            <summary>
+            Gets the HTTP status code that was returned in the response.
+            </summary>
+        </member>
+        <member name="P:Zencoder.Response.Success">
+            <summary>
+            Gets a value indicating whether the request was successful.
+            </summary>
+        </member>
+        <member name="M:Zencoder.Response`2.FromJson(System.String)">
+            <summary>
+            Creates a new <see cref="T:Zencoder.Response"/> instance from the given JSON string.
+            </summary>
+            <param name="json">A string of JSON representing the response.</param>
+            <returns>A <see cref="T:Zencoder.Response"/>.</returns>
+        </member>
+        <member name="M:Zencoder.Response`2.FromJson(System.IO.Stream)">
+            <summary>
+            Creates a new <see cref="T:Zencoder.Response"/> instance from the JSON data in the given stream.
+            </summary>
+            <param name="stream">The stream to create the response from.</param>
+            <returns>A <see cref="T:Zencoder.Response"/>.</returns>
+        </member>
+        <member name="P:Zencoder.AccountDetailsResponse.AccountState">
+            <summary>
+            Gets or sets the account's current state.
+            Sorry about the string, kids. Could't find an exhaustive list of states.
+            </summary>
+        </member>
+        <member name="P:Zencoder.AccountDetailsResponse.BillingState">
+            <summary>
+            Gets or sets the account's current billing state.
+            Sorry about the string, kids. Could't find an exhaustive list of states.
+            </summary>
+        </member>
+        <member name="P:Zencoder.AccountDetailsResponse.IntegrationMode">
+            <summary>
+            Gets or sets a value indicating whether the account is in integration mode.
+            </summary>
+        </member>
+        <member name="P:Zencoder.AccountDetailsResponse.MinutesIncluded">
+            <summary>
+            Gets or sets the number of minutes included in the account's plan.
+            </summary>
+        </member>
+        <member name="P:Zencoder.AccountDetailsResponse.MinutesUsed">
+            <summary>
+            Gets or sets the number of minutes used by the account.
+            </summary>
+        </member>
+        <member name="P:Zencoder.AccountDetailsResponse.Plan">
+            <summary>
+            Gets or sets the account's plan.
+            </summary>
+        </member>
+        <member name="T:Zencoder.AccountIntegrationModeRequest">
+            <summary>
+            Implements the account integration mode request.
+            </summary>
+        </member>
+        <member name="M:Zencoder.AccountIntegrationModeRequest.#ctor(Zencoder.Zencoder)">
+            <summary>
+            Initializes a new instance of the AccountIntegrationModeRequest class.
+            </summary>
+            <param name="zencoder">The <see cref="T:Zencoder.Zencoder"/> service to create the request with.</param>
+        </member>
+        <member name="M:Zencoder.AccountIntegrationModeRequest.#ctor(System.String,System.Uri)">
+            <summary>
+            Initializes a new instance of the AccountIntegrationModeRequest class.
+            </summary>
+            <param name="apiKey">The API key to use when connecting to the service.</param>
+            <param name="baseUrl">The service base URL.</param>
+        </member>
+        <member name="M:Zencoder.AccountIntegrationModeRequest.ReadResponse(System.IO.Stream)">
+            <summary>
+            Reads any data from the response stream into a new <see cref="T:Zencoder.Response"/> instance.
+            </summary>
+            <param name="stream">The stream to read from.</param>
+            <returns>The created response.</returns>
+        </member>
+        <member name="P:Zencoder.AccountIntegrationModeRequest.Enable">
+            <summary>
+            Gets or sets a value indicating whether to enable integration mode for the account.
+            </summary>
+        </member>
+        <member name="P:Zencoder.AccountIntegrationModeRequest.Url">
+            <summary>
+            Gets the concrete URL this request will call.
+            </summary>
+        </member>
+        <member name="P:Zencoder.AccountIntegrationModeRequest.Verb">
+            <summary>
+            Gets the HTTP verb to use when making the request.
+            </summary>
+        </member>
+        <member name="T:Zencoder.AccountIntegrationModeResponse">
+            <summary>
+            Implements the account integration mode response.
+            </summary>
+        </member>
+        <member name="T:Zencoder.AspectMode">
+            <summary>
+            Defines the possible output video aspect modes.
+            </summary>
+        </member>
+        <member name="F:Zencoder.AspectMode.Preserve">
+            <summary>
+            Identifies that the input aspect ratio is preserved.
+            </summary>
+        </member>
+        <member name="F:Zencoder.AspectMode.Stretch">
+            <summary>
+            Identifies that the output will be stretched to fit the specified size, even if distortion occurs.
+            </summary>
+        </member>
+        <member name="F:Zencoder.AspectMode.Crop">
+            <summary>
+            Identifies that the output will be cropped to fit the specified size.
+            Equivalent to "pan and scan".
+            </summary>
+        </member>
+        <member name="F:Zencoder.AspectMode.Pad">
+            <summary>
+            Identifies that the output will be letterboxed to match the specified size exactly.
+            </summary>
+        </member>
+        <member name="T:Zencoder.AudioCodec">
+            <summary>
+            Defines the possible output audio codecs.
+            </summary>
+        </member>
+        <member name="F:Zencoder.AudioCodec.Aac">
+            <summary>
+            Identifies the AAC audio codec.
+            </summary>
+        </member>
+        <member name="F:Zencoder.AudioCodec.Amr">
+            <summary>
+            Identifies the AMR audio codec.
+            </summary>
+        </member>
+        <member name="F:Zencoder.AudioCodec.Mp3">
+            <summary>
+            Identifies that MP3 audio codec.
+            </summary>
+        </member>
+        <member name="F:Zencoder.AudioCodec.Vorbis">
+            <summary>
+            Identifies the Vorbis audio codec.
+            </summary>
+        </member>
+        <member name="F:Zencoder.AudioCodec.Wma">
+            <summary>
+            Identifies the WMA audio codec.
+            </summary>
+        </member>
+        <member name="T:Zencoder.BooleanConverter">
+            <summary>
+            Provides custom JSON serialization to allow any combination of "true", "false", "1" or "0" to be used for booleans.
+            </summary>
+        </member>
+        <member name="M:Zencoder.BooleanConverter.CanConvert(System.Type)">
+            <summary>
+            Determines whether this instance can convert the specified object type. 
+            </summary>
+            <param name="objectType">Type of the object.</param>
+            <returns>True if this instance can convert the specified object type, otherwise false.</returns>
+        </member>
+        <member name="M:Zencoder.BooleanConverter.ReadJson(Newtonsoft.Json.JsonReader,System.Type,System.Object,Newtonsoft.Json.JsonSerializer)">
+            <summary>
+            Reads the JSON representation of the object. 
+            </summary>
+            <param name="reader">The JsonReader to read from.</param>
+            <param name="objectType">Type of the object.</param>
+            <param name="existingValue">The existing value of the object being read.</param>
+            <param name="serializer">The calling serializer.</param>
+            <returns>The object value.</returns>
+        </member>
+        <member name="M:Zencoder.BooleanConverter.WriteJson(Newtonsoft.Json.JsonWriter,System.Object,Newtonsoft.Json.JsonSerializer)">
+            <summary>
+            Writes the JSON representation of the object. 
+            </summary>
+            <param name="writer">The JsonWriter to write to.</param>
+            <param name="value">The value.</param>
+            <param name="serializer">The calling serializer.</param>
+        </member>
+        <member name="T:Zencoder.CancelJobRequest">
+            <summary>
+            Implements the cancel job request.
+            </summary>
+        </member>
+        <member name="M:Zencoder.CancelJobRequest.#ctor(Zencoder.Zencoder)">
+            <summary>
+            Initializes a new instance of the CancelJobRequest class.
+            </summary>
+            <param name="zencoder">The <see cref="T:Zencoder.Zencoder"/> service to create the request with.</param>
+        </member>
+        <member name="M:Zencoder.CancelJobRequest.#ctor(System.String,System.Uri)">
+            <summary>
+            Initializes a new instance of the CancelJobRequest class.
+            </summary>
+            <param name="apiKey">The API key to use when connecting to the service.</param>
+            <param name="baseUrl">The service base URL.</param>
+        </member>
+        <member name="P:Zencoder.CancelJobRequest.JobId">
+            <summary>
+            Gets or sets the ID of the job to cancel.
+            </summary>
+        </member>
+        <member name="P:Zencoder.CancelJobRequest.Url">
+            <summary>
+            Gets the concrete URL this request will call.
+            </summary>
+        </member>
+        <member name="P:Zencoder.CancelJobRequest.Verb">
+            <summary>
+            Gets the HTTP verb to use when making the request.
+            </summary>
+        </member>
+        <member name="T:Zencoder.CancelJobResponse">
+            <summary>
+            Implements the cancel job response.
+            </summary>
+        </member>
+        <member name="P:Zencoder.CancelJobResponse.InConflict">
+            <summary>
+            Gets a value indicating whether the service indicated that the cancel request
+            was invalid because the job was not in the "waiting" or "processing" state.
+            </summary>
+        </member>
+        <member name="T:Zencoder.CreateAccountRequest">
+            <summary>
+            Implements the create account request.
+            </summary>
+        </member>
+        <member name="M:Zencoder.CreateAccountRequest.#ctor(Zencoder.Zencoder)">
+            <summary>
+            Initializes a new instance of the CreateAccountRequest class.
+            </summary>
+            <param name="zencoder">The <see cref="T:Zencoder.Zencoder"/> service to create the request with.</param>
+        </member>
+        <member name="M:Zencoder.CreateAccountRequest.#ctor(System.Uri)">
+            <summary>
+            Initializes a new instance of the CreateAccountRequest class.
+            </summary>
+            <param name="baseUrl">The service base URL.</param>
+        </member>
+        <member name="P:Zencoder.CreateAccountRequest.AffiliateCode">
+            <summary>
+            Gets or sets the affiliate code to create the account with, if applicable.
+            </summary>
+        </member>
+        <member name="P:Zencoder.CreateAccountRequest.ApiKey">
+            <summary>
+            Gets or sets the API key to use when connecting to the service.
+            </summary>
+        </member>
+        <member name="P:Zencoder.CreateAccountRequest.Email">
+            <summary>
+            Gets or sets the email to create the account with.
+            </summary>
+        </member>
+        <member name="P:Zencoder.CreateAccountRequest.Newsletter">
+            <summary>
+            Gets or sets a value indicating whether to subscribe the email address to the newsletter.
+            </summary>
+        </member>
+        <member name="P:Zencoder.CreateAccountRequest.Password">
+            <summary>
+            Gets or sets the password to create the account with.
+            </summary>
+        </member>
+        <member name="P:Zencoder.CreateAccountRequest.TermsOfService">
+            <summary>
+            Gets or sets a value indicating whether the terms of service are agreed to.
+            Use 1 for true, 0 for false.
+            </summary>
+        </member>
+        <member name="P:Zencoder.CreateAccountRequest.Url">
+            <summary>
+            Gets the concrete URL this request will call.
+            </summary>
+        </member>
+        <member name="P:Zencoder.CreateAccountRequest.Verb">
+            <summary>
+            Gets the HTTP verb to use when making the request.
+            </summary>
+        </member>
+        <member name="T:Zencoder.CreateAccountResponse">
+            <summary>
+            Implements the create account response.
+            </summary>
+        </member>
+        <member name="P:Zencoder.CreateAccountResponse.ApiKey">
+            <summary>
+            Gets or sets the account's new API key.
+            </summary>
+        </member>
+        <member name="P:Zencoder.CreateAccountResponse.Password">
+            <summary>
+            Gets or sets the account's password.
+            </summary>
+        </member>
+        <member name="P:Zencoder.CreateAccountResponse.Success">
+            <summary>
+            Gets a value indicating whether the request was successful.
+            </summary>
+        </member>
+        <member name="T:Zencoder.CreateJobRequest">
+            <summary>
+            Implements the create encoding job request.
+            </summary>
+        </member>
+        <member name="M:Zencoder.CreateJobRequest.#ctor(Zencoder.Zencoder)">
+            <summary>
+            Initializes a new instance of the CreateJobRequest class.
+            </summary>
+            <param name="zencoder">The <see cref="T:Zencoder.Zencoder"/> service to create the request with.</param>
+        </member>
+        <member name="M:Zencoder.CreateJobRequest.#ctor(System.String,System.Uri)">
+            <summary>
+            Initializes a new instance of the CreateJobRequest class.
+            </summary>
+            <param name="apiKey">The API key to use when connecting to the service.</param>
+            <param name="baseUrl">The service base URL.</param>
+        </member>
+        <member name="M:Zencoder.CreateJobRequest.WithInputUrl(System.Uri)">
+            <summary>
+            Sets the value of this instanc's <see cref="P:Zencoder.CreateJobRequest.Input"/> URL.
+            </summary>
+            <param name="url">The URL to set.</param>
+            <returns>This instance.</returns>
+        </member>
+        <member name="M:Zencoder.CreateJobRequest.WithOutput(Zencoder.Output)">
+            <summary>
+            Appends an <see cref="T:Zencoder.Output"/> to this instance's <see cref="P:Zencoder.CreateJobRequest.Outputs"/> collection.
+            </summary>
+            <param name="output">The output to append.</param>
+            <returns>This instance.</returns>
+        </member>
+        <member name="M:Zencoder.CreateJobRequest.WithOutputs(System.Collections.Generic.IEnumerable{Zencoder.Output})">
+            <summary>
+            Appends a collection <see cref="T:Zencoder.Output"/>s to this instance's <see cref="P:Zencoder.CreateJobRequest.Outputs"/> collection.
+            </summary>
+            <param name="outputs">The outputs to append.</param>
+            <returns>This instance.</returns>
+        </member>
+        <member name="P:Zencoder.CreateJobRequest.DownloadConnections">
+            <summary>
+            Gets or sets the number of connections to use when downloading the input file.
+            Defaults to 5. Maximum allowed is 25.
+            </summary>
+        </member>
+        <member name="P:Zencoder.CreateJobRequest.Input">
+            <summary>
+            Gets or sets the URL of the audo or video file to process.
+            </summary>
+        </member>
+        <member name="P:Zencoder.CreateJobRequest.Mock">
+            <summary>
+            Gets or sets a value indicating whether to simply mock the response without actually
+            creating a job. Set to true when running tests.
+            </summary>
+        </member>
+        <member name="P:Zencoder.CreateJobRequest.Outputs">
+            <summary>
+            Gets or sets the output collection definiing outputs for the job.
+            </summary>
+        </member>
+        <member name="P:Zencoder.CreateJobRequest.Region">
+            <summary>
+            Gets or sets the region to use when processing the job.
+            Defaults to "us".
+            </summary>
+        </member>
+        <member name="P:Zencoder.CreateJobRequest.Test">
+            <summary>
+            Gets or sets a value indicating whether test mode is enabled for the job.
+            </summary>
+        </member>
+        <member name="P:Zencoder.CreateJobRequest.Url">
+            <summary>
+            Gets the concrete URL this request will call.
+            </summary>
+        </member>
+        <member name="P:Zencoder.CreateJobRequest.Verb">
+            <summary>
+            Gets the HTTP verb to use when making the request.
+            </summary>
+        </member>
+        <member name="T:Zencoder.CreateJobResponse">
+            <summary>
+            Implements the create encoding job response.
+            </summary>
+        </member>
+        <member name="P:Zencoder.CreateJobResponse.Id">
+            <summary>
+            Gets or sets the job ID.
+            </summary>
+        </member>
+        <member name="P:Zencoder.CreateJobResponse.Outputs">
+            <summary>
+            Gets or sets the response output collection.
+            </summary>
+        </member>
+        <member name="P:Zencoder.CreateJobResponse.Success">
+            <summary>
+            Gets a value indicating whether the request was successful.
+            </summary>
+        </member>
+        <member name="T:Zencoder.DefaultingIntegerConverter">
+            <summary>
+            Serializes integer values, using 0 as the default value during de-serialization
+            when a null is encountered.
+            </summary>
+        </member>
+        <member name="M:Zencoder.DefaultingIntegerConverter.CanConvert(System.Type)">
+            <summary>
+            Determines whether this instance can convert the specified object type. 
+            </summary>
+            <param name="objectType">Type of the object.</param>
+            <returns>True if this instance can convert the specified object type, otherwise false.</returns>
+        </member>
+        <member name="M:Zencoder.DefaultingIntegerConverter.ReadJson(Newtonsoft.Json.JsonReader,System.Type,System.Object,Newtonsoft.Json.JsonSerializer)">
+            <summary>
+            Reads the JSON representation of the object. 
+            </summary>
+            <param name="reader">The JsonReader to read from.</param>
+            <param name="objectType">Type of the object.</param>
+            <param name="existingValue">The existing value of the object being read.</param>
+            <param name="serializer">The calling serializer.</param>
+            <returns>The object value.</returns>
+        </member>
+        <member name="M:Zencoder.DefaultingIntegerConverter.WriteJson(Newtonsoft.Json.JsonWriter,System.Object,Newtonsoft.Json.JsonSerializer)">
+            <summary>
+            Writes the JSON representation of the object. 
+            </summary>
+            <param name="writer">The JsonWriter to write to.</param>
+            <param name="value">The value.</param>
+            <param name="serializer">The calling serializer.</param>
+        </member>
+        <member name="M:Zencoder.DefaultingIntegerConverter.GetDefaultValue(System.TypeCode)">
+            <summary>
+            Gets the default integral value for the given type.
+            </summary>
+            <param name="typeCode">The integral type to get the default value for.</param>
+            <returns>A default value.</returns>
+        </member>
+        <member name="M:Zencoder.DefaultingIntegerConverter.ReadValue(System.TypeCode,System.String)">
+            <summary>
+            Reads the value for the given integral type from the given string.
+            </summary>
+            <param name="typeCode">The type code of the integral type to read.</param>
+            <param name="value">The string to read the value from.</param>
+            <returns>The integral value.</returns>
+        </member>
+        <member name="T:Zencoder.Deinterlace">
+            <summary>
+            Defines the possible deinterlacing behaviors.
+            </summary>
+        </member>
+        <member name="F:Zencoder.Deinterlace.Detect">
+            <summary>
+            Identifies that deinterlacing is the same as the input video.
+            </summary>
+        </member>
+        <member name="F:Zencoder.Deinterlace.On">
+            <summary>
+            Identifies that deinterlacing is on.
+            </summary>
+        </member>
+        <member name="F:Zencoder.Deinterlace.Off">
+            <summary>
+            Identifies that deinterlacing is off.
+            </summary>
+        </member>
+        <member name="T:Zencoder.DeleteJobRequest">
+            <summary>
+            Implements the delete job request.
+            </summary>
+        </member>
+        <member name="M:Zencoder.DeleteJobRequest.#ctor(Zencoder.Zencoder)">
+            <summary>
+            Initializes a new instance of the DeleteJobRequest class.
+            </summary>
+            <param name="zencoder">The <see cref="T:Zencoder.Zencoder"/> service to create the request with.</param>
+        </member>
+        <member name="M:Zencoder.DeleteJobRequest.#ctor(System.String,System.Uri)">
+            <summary>
+            Initializes a new instance of the DeleteJobRequest class.
+            </summary>
+            <param name="apiKey">The API key to use when connecting to the service.</param>
+            <param name="baseUrl">The service base URL.</param>
+        </member>
+        <member name="P:Zencoder.DeleteJobRequest.JobId">
+            <summary>
+            Gets or sets the ID of the job to delete.
+            </summary>
+        </member>
+        <member name="P:Zencoder.DeleteJobRequest.Url">
+            <summary>
+            Gets the concrete URL this request will call.
+            </summary>
+        </member>
+        <member name="P:Zencoder.DeleteJobRequest.Verb">
+            <summary>
+            Gets the HTTP verb to use when making the request.
+            </summary>
+        </member>
+        <member name="T:Zencoder.DeleteJobResponse">
+            <summary>
+            Implements the delete job response.
+            </summary>
+        </member>
+        <member name="P:Zencoder.DeleteJobResponse.InConflict">
+            <summary>
+            Gets a value indicating whether the service indicated that the delete request
+            was invalid because the job was in the "finished" state.
+            </summary>
+        </member>
+        <member name="T:Zencoder.DenoiseFilter">
+            <summary>
+            Defins the possible denoise filter values.
+            </summary>
+        </member>
+        <member name="F:Zencoder.DenoiseFilter.Weak">
+            <summary>
+            Identifies the weak denoise filter.
+            </summary>
+        </member>
+        <member name="F:Zencoder.DenoiseFilter.Medium">
+            <summary>
+            Identifies the medium denoise filter.
+            </summary>
+        </member>
+        <member name="F:Zencoder.DenoiseFilter.Strong">
+            <summary>
+            Identifies the strong denoise filter.
+            </summary>
+        </member>
+        <member name="F:Zencoder.DenoiseFilter.Strongest">
+            <summary>
+            Identifies the strongest denoise filter.
+            </summary>
+        </member>
+        <member name="T:Zencoder.DeviceProfile">
+            <summary>
+            Defines the possible output device profile shortcuts.
+            </summary>
+        </member>
+        <member name="F:Zencoder.DeviceProfile.MobileAdvanced">
+            <summary>
+            Identifies the mobile/advanced profile.
+            </summary>
+        </member>
+        <member name="F:Zencoder.DeviceProfile.MobileBaseline">
+            <summary>
+            Identifies the mobile/baseline profile.
+            </summary>
+        </member>
+        <member name="F:Zencoder.DeviceProfile.MobileLegacy">
+            <summary>
+            Identifies the mobile/legacy profile.
+            </summary>
+        </member>
+        <member name="F:Zencoder.DeviceProfile.V1MobileAdvanced">
+            <summary>
+            Identifies the v1/mobile/advanced profile.
+            </summary>
+        </member>
+        <member name="F:Zencoder.DeviceProfile.V1MobileBaseline">
+            <summary>
+            Identifies the v1/mobile/baseline profile.
+            </summary>
+        </member>
+        <member name="F:Zencoder.DeviceProfile.V1MobileLegacy">
+            <summary>
+            Identifies the v1/mobile/legacy profile.
+            </summary>
+        </member>
+        <member name="F:Zencoder.DeviceProfile.V2MobileLegacy">
+            <summary>
+            Identifies the v2/mobile/legacy profile.
+            </summary>
+        </member>
+        <member name="T:Zencoder.EmailNotification">
+            <summary>
+            Represents an email notification specification for an <see cref="T:Zencoder.Output"/>.
+            </summary>
+        </member>
+        <member name="T:Zencoder.Notification">
+            <summary>
+            Base class for <see cref="T:Zencoder.Output"/> notifications.
+            </summary>
+        </member>
+        <member name="M:Zencoder.Notification.ForEmail(System.String)">
+            <summary>
+            Creates a new email <see cref="T:Zencoder.Notification"/> for the specified email address.
+            </summary>
+            <param name="email">The email address to notify.</param>
+            <returns>The created <see cref="T:Zencoder.Notification"/>.</returns>
+        </member>
+        <member name="M:Zencoder.Notification.ForHttp(System.String)">
+            <summary>
+            Creates a new HTTP <see cref="T:Zencoder.Notification"/> for posting to the given URL.
+            </summary>
+            <param name="url">The URL to post to.</param>
+            <returns>The created <see cref="T:Zencoder.Notification"/>.</returns>
+        </member>
+        <member name="M:Zencoder.Notification.ForHttp(System.Uri)">
+            <summary>
+            Creates a new HTTP <see cref="T:Zencoder.Notification"/> for posting to the given URL.
+            </summary>
+            <param name="url">The URL to post to.</param>
+            <returns>The created <see cref="T:Zencoder.Notification"/>.</returns>
+        </member>
+        <member name="P:Zencoder.EmailNotification.Email">
+            <summary>
+            Gets or sets the email address to send output notifications to.
+            </summary>
+        </member>
+        <member name="T:Zencoder.EmailNotificationJsonConverter">
+            <summary>
+            Provides custom JSON serialization for <see cref="T:Zencoder.EmailNotification"/>s
+            </summary>
+        </member>
+        <member name="M:Zencoder.EmailNotificationJsonConverter.CanConvert(System.Type)">
+            <summary>
+            Determines whether this instance can convert the specified object type. 
+            </summary>
+            <param name="objectType">Type of the object.</param>
+            <returns>True if this instance can convert the specified object type, otherwise false.</returns>
+        </member>
+        <member name="M:Zencoder.EmailNotificationJsonConverter.ReadJson(Newtonsoft.Json.JsonReader,System.Type,System.Object,Newtonsoft.Json.JsonSerializer)">
+            <summary>
+            Reads the JSON representation of the object. 
+            </summary>
+            <param name="reader">The JsonReader to read from.</param>
+            <param name="objectType">Type of the object.</param>
+            <param name="existingValue">The existing value of the object being read.</param>
+            <param name="serializer">The calling serializer.</param>
+            <returns>The object value.</returns>
+        </member>
+        <member name="M:Zencoder.EmailNotificationJsonConverter.WriteJson(Newtonsoft.Json.JsonWriter,System.Object,Newtonsoft.Json.JsonSerializer)">
+            <summary>
+            Writes the JSON representation of the object. 
+            </summary>
+            <param name="writer">The JsonWriter to write to.</param>
+            <param name="value">The value.</param>
+            <param name="serializer">The calling serializer.</param>
+        </member>
+        <member name="P:Zencoder.EmailNotificationJsonConverter.CanRead">
+            <summary>
+            Gets a value indicating whether this <see cref="T:Newtonsoft.Json.JsonConverter"/> can read JSON.
+            </summary>
+        </member>
+        <member name="T:Zencoder.EnumDescriptionConverter">
+            <summary>
+            Provides custom JSON serialization for enums by their description value.
+            </summary>
+        </member>
+        <member name="M:Zencoder.EnumDescriptionConverter.CanConvert(System.Type)">
+            <summary>
+            Determines whether this instance can convert the specified object type. 
+            </summary>
+            <param name="objectType">Type of the object.</param>
+            <returns>True if this instance can convert the specified object type, otherwise false.</returns>
+        </member>
+        <member name="M:Zencoder.EnumDescriptionConverter.ReadJson(Newtonsoft.Json.JsonReader,System.Type,System.Object,Newtonsoft.Json.JsonSerializer)">
+            <summary>
+            Reads the JSON representation of the object. 
+            </summary>
+            <param name="reader">The JsonReader to read from.</param>
+            <param name="objectType">Type of the object.</param>
+            <param name="existingValue">The existing value of the object being read.</param>
+            <param name="serializer">The calling serializer.</param>
+            <returns>The object value.</returns>
+        </member>
+        <member name="M:Zencoder.EnumDescriptionConverter.WriteJson(Newtonsoft.Json.JsonWriter,System.Object,Newtonsoft.Json.JsonSerializer)">
+            <summary>
+            Writes the JSON representation of the object. 
+            </summary>
+            <param name="writer">The JsonWriter to write to.</param>
+            <param name="value">The value.</param>
+            <param name="serializer">The calling serializer.</param>
+        </member>
+        <member name="T:Zencoder.EnumIntJsonConverter">
+            <summary>
+            Provides custom JSON serialization for enums to/from integers.
+            </summary>
+        </member>
+        <member name="M:Zencoder.EnumIntJsonConverter.CanConvert(System.Type)">
+            <summary>
+            Determines whether this instance can convert the specified object type. 
+            </summary>
+            <param name="objectType">Type of the object.</param>
+            <returns>True if this instance can convert the specified object type, otherwise false.</returns>
+        </member>
+        <member name="M:Zencoder.EnumIntJsonConverter.ReadJson(Newtonsoft.Json.JsonReader,System.Type,System.Object,Newtonsoft.Json.JsonSerializer)">
+            <summary>
+            Reads the JSON representation of the object. 
+            </summary>
+            <param name="reader">The JsonReader to read from.</param>
+            <param name="objectType">Type of the object.</param>
+            <param name="existingValue">The existing value of the object being read.</param>
+            <param name="serializer">The calling serializer.</param>
+            <returns>The object value.</returns>
+        </member>
+        <member name="M:Zencoder.EnumIntJsonConverter.WriteJson(Newtonsoft.Json.JsonWriter,System.Object,Newtonsoft.Json.JsonSerializer)">
+            <summary>
+            Writes the JSON representation of the object. 
+            </summary>
+            <param name="writer">The JsonWriter to write to.</param>
+            <param name="value">The value.</param>
+            <param name="serializer">The calling serializer.</param>
+        </member>
+        <member name="T:Zencoder.EnumLowercaseJsonConverter">
+            <summary>
+            Provides custom JSON serialization for enums to/from lowercase strings.
+            </summary>
+        </member>
+        <member name="M:Zencoder.EnumLowercaseJsonConverter.CanConvert(System.Type)">
+            <summary>
+            Determines whether this instance can convert the specified object type. 
+            </summary>
+            <param name="objectType">Type of the object.</param>
+            <returns>True if this instance can convert the specified object type, otherwise false.</returns>
+        </member>
+        <member name="M:Zencoder.EnumLowercaseJsonConverter.ReadJson(Newtonsoft.Json.JsonReader,System.Type,System.Object,Newtonsoft.Json.JsonSerializer)">
+            <summary>
+            Reads the JSON representation of the object. 
+            </summary>
+            <param name="reader">The JsonReader to read from.</param>
+            <param name="objectType">Type of the object.</param>
+            <param name="existingValue">The existing value of the object being read.</param>
+            <param name="serializer">The calling serializer.</param>
+            <returns>The object value.</returns>
+        </member>
+        <member name="M:Zencoder.EnumLowercaseJsonConverter.WriteJson(Newtonsoft.Json.JsonWriter,System.Object,Newtonsoft.Json.JsonSerializer)">
+            <summary>
+            Writes the JSON representation of the object. 
+            </summary>
+            <param name="writer">The JsonWriter to write to.</param>
+            <param name="value">The value.</param>
+            <param name="serializer">The calling serializer.</param>
+        </member>
+        <member name="T:Zencoder.EnumLowercaseUnderscoreJsonConverter">
+            <summary>
+            Provides custom JSON serialization for enums to/from lowercase_underscore strings.
+            </summary>
+        </member>
+        <member name="M:Zencoder.EnumLowercaseUnderscoreJsonConverter.CanConvert(System.Type)">
+            <summary>
+            Determines whether this instance can convert the specified object type. 
+            </summary>
+            <param name="objectType">Type of the object.</param>
+            <returns>True if this instance can convert the specified object type, otherwise false.</returns>
+        </member>
+        <member name="M:Zencoder.EnumLowercaseUnderscoreJsonConverter.ReadJson(Newtonsoft.Json.JsonReader,System.Type,System.Object,Newtonsoft.Json.JsonSerializer)">
+            <summary>
+            Reads the JSON representation of the object. 
+            </summary>
+            <param name="reader">The JsonReader to read from.</param>
+            <param name="objectType">Type of the object.</param>
+            <param name="existingValue">The existing value of the object being read.</param>
+            <param name="serializer">The calling serializer.</param>
+            <returns>The object value.</returns>
+        </member>
+        <member name="M:Zencoder.EnumLowercaseUnderscoreJsonConverter.WriteJson(Newtonsoft.Json.JsonWriter,System.Object,Newtonsoft.Json.JsonSerializer)">
+            <summary>
+            Writes the JSON representation of the object. 
+            </summary>
+            <param name="writer">The JsonWriter to write to.</param>
+            <param name="value">The value.</param>
+            <param name="serializer">The calling serializer.</param>
+        </member>
+        <member name="T:Zencoder.Enums">
+            <summary>
+            Provides extensions and helpers for enumerations.
+            </summary>
+        </member>
+        <member name="M:Zencoder.Enums.EnumFromDescription``1(System.String)">
+            <summary>
+            Parses an enum from the given description or member name.
+            </summary>
+            <typeparam name="T">The type of the enum to parse.</typeparam>
+            <param name="value">The enum member name or description value to parse.</param>
+            <returns>The parsed enum.</returns>
+        </member>
+        <member name="M:Zencoder.Enums.EnumFromDescription(System.String,System.Type)">
+            <summary>
+            Parses an enum from the given description or member name.
+            </summary>
+            <param name="value">The enum member name or description value to parse.</param>
+            <param name="enumType">The type of the enum to parse.</param>
+            <returns>The parsed enum.</returns>
+        </member>
+        <member name="M:Zencoder.Enums.IsNullableEnum(System.Type)">
+            <summary>
+            Gets a value indicating whether the type is a nullable enum.
+            </summary>
+            <param name="objectType">The object type to check.</param>
+            <returns>True if the type is a nullable enum, false otherwise.</returns>
+        </member>
+        <member name="M:Zencoder.Enums.ToDescription(System.Enum)">
+            <summary>
+            Gets the string representation of the enum value, substituting its
+            description attribute value if set.
+            </summary>
+            <param name="value">The enum to get the description of.</param>
+            <returns>An enum description.</returns>
+        </member>
+        <member name="T:Zencoder.FromJsonAttribute">
+            <summary>
+            Defines a custom method to use when converting a <see cref="T:Zencoder.Response"/> from JSON.
+            </summary>
+        </member>
+        <member name="P:Zencoder.FromJsonAttribute.Method">
+            <summary>
+            Gets or sets the name of the static method to use when converting the response from JSON.
+            </summary>
+        </member>
+        <member name="P:Zencoder.FromJsonAttribute.Type">
+            <summary>
+            Gets or sets the type to use when converting the response from JSON.
+            </summary>
+        </member>
+        <member name="T:Zencoder.FromJsonStreamAttribute">
+            <summary>
+            Defines a custom method to use when converting a <see cref="T:Zencoder.Response"/> from JSON.
+            The method must be static, return the type's concrete <see cref="T:Zencoder.Response"/> and
+            must accept a <see cref="T:System.IO.Stream"/>.
+            </summary>
+        </member>
+        <member name="T:Zencoder.FromJsonStringAttribute">
+            <summary>
+            Defines a custom method to use when converting a <see cref="T:Zencoder.Response"/> from JSON.
+            The method must be static, return the type's concrete <see cref="T:Zencoder.Response"/> and
+            must accept a <see cref="T:System.String"/>.
+            </summary>
+        </member>
+        <member name="T:Zencoder.H264Level">
+            <summary>
+            Defines the possible H264 levels.
+            </summary>
+        </member>
+        <member name="F:Zencoder.H264Level.Three">
+            <summary>
+            Identifies level 3.
+            </summary>
+        </member>
+        <member name="F:Zencoder.H264Level.One">
+            <summary>
+            Identifies level 1.
+            </summary>
+        </member>
+        <member name="F:Zencoder.H264Level.OneB">
+            <summary>
+            Identifies level 1b.
+            </summary>
+        </member>
+        <member name="F:Zencoder.H264Level.OnePointOne">
+            <summary>
+            Identifies level 1.1.
+            </summary>
+        </member>
+        <member name="F:Zencoder.H264Level.OnePointTwo">
+            <summary>
+            Identifies level 1.2.
+            </summary>
+        </member>
+        <member name="F:Zencoder.H264Level.OnePointThree">
+            <summary>
+            Identifies level 1.3.
+            </summary>
+        </member>
+        <member name="F:Zencoder.H264Level.Two">
+            <summary>
+            Identifies level 2.
+            </summary>
+        </member>
+        <member name="F:Zencoder.H264Level.TwoPointOne">
+            <summary>
+            Identifies level 2.1.
+            </summary>
+        </member>
+        <member name="F:Zencoder.H264Level.TwoPointTwo">
+            <summary>
+            Identifies level 2.2.
+            </summary>
+        </member>
+        <member name="F:Zencoder.H264Level.ThreePointOne">
+            <summary>
+            Identifies level 3.1.
+            </summary>
+        </member>
+        <member name="F:Zencoder.H264Level.ThreePointTwo">
+            <summary>
+            Identifies level 3.2.
+            </summary>
+        </member>
+        <member name="F:Zencoder.H264Level.Four">
+            <summary>
+            Identifies level 4.
+            </summary>
+        </member>
+        <member name="F:Zencoder.H264Level.FourPointOne">
+            <summary>
+            Identifies level 4.1.
+            </summary>
+        </member>
+        <member name="F:Zencoder.H264Level.FourPointTwo">
+            <summary>
+            Identifies level 4.2.
+            </summary>
+        </member>
+        <member name="F:Zencoder.H264Level.Five">
+            <summary>
+            Identifies level 5.
+            </summary>
+        </member>
+        <member name="F:Zencoder.H264Level.FivePointOne">
+            <summary>
+            Identifies level 5.1.
+            </summary>
+        </member>
+        <member name="T:Zencoder.H264Profile">
+            <summary>
+            Defines the possible H264 profiles.
+            </summary>
+        </member>
+        <member name="F:Zencoder.H264Profile.Baseline">
+            <summary>
+            Identifies the baseline profile.
+            </summary>
+        </member>
+        <member name="F:Zencoder.H264Profile.Main">
+            <summary>
+            Identifies the main profile.
+            </summary>
+        </member>
+        <member name="F:Zencoder.H264Profile.High">
+            <summary>
+            Identifies the high profile.
+            </summary>
+        </member>
+        <member name="T:Zencoder.HttpNotification">
+            <summary>
+            Represents an HTTP notification specification for an <see cref="T:Zencoder.Output"/>.
+            </summary>
+        </member>
+        <member name="M:Zencoder.HttpNotification.WithUrl(System.Uri)">
+            <summary>
+            Sets this instance's <see cref="P:Zencoder.HttpNotification.Url"/> property.
+            </summary>
+            <param name="url">The URL to set.</param>
+            <returns>This instance.</returns>
+        </member>
+        <member name="P:Zencoder.HttpNotification.Format">
+            <summary>
+            Gets the format to post notifications in.
+            Always returns JSON.
+            </summary>
+        </member>
+        <member name="P:Zencoder.HttpNotification.Url">
+            <summary>
+            Gets or sets the URL to post notifications to for the output.
+            </summary>
+        </member>
+        <member name="T:Zencoder.HttpPostNotification">
+            <summary>
+            Represents an HTTP-posted job output notification.
+            </summary>
+        </member>
+        <member name="P:Zencoder.HttpPostNotification.Job">
+            <summary>
+            Gets or sets the job the notification relates to.
+            </summary>
+        </member>
+        <member name="P:Zencoder.HttpPostNotification.Output">
+            <summary>
+            Gets or sets the job's output the notification relates to.
+            </summary>
+        </member>
+        <member name="T:Zencoder.HttpPostNotificationJob">
+            <summary>
+            Represents a job in an <see cref="T:Zencoder.HttpPostNotification"/>.
+            </summary>
+        </member>
+        <member name="P:Zencoder.HttpPostNotificationJob.Id">
+            <summary>
+            Gets or sets the job ID.
+            </summary>
+        </member>
+        <member name="P:Zencoder.HttpPostNotificationJob.State">
+            <summary>
+            Gets or sets the job state.
+            </summary>
+        </member>
+        <member name="T:Zencoder.HttpPostNotificationOutput">
+            <summary>
+            Represents a job output in an <see cref="T:Zencoder.HttpPostNotification"/>.
+            </summary>
+        </member>
+        <member name="P:Zencoder.HttpPostNotificationOutput.Id">
+            <summary>
+            Gets or sets the output's ID.
+            </summary>
+        </member>
+        <member name="P:Zencoder.HttpPostNotificationOutput.Label">
+            <summary>
+            Gets or sets the output's label, if applicable.
+            </summary>
+        </member>
+        <member name="P:Zencoder.HttpPostNotificationOutput.State">
+            <summary>
+            Gets or sets the output's state.
+            </summary>
+        </member>
+        <member name="P:Zencoder.HttpPostNotificationOutput.Url">
+            <summary>
+            Gets or sets the output's URL.
+            </summary>
+        </member>
+        <member name="T:Zencoder.INotificationReceiver">
+            <summary>
+            Interface definitions for notification receivers that are invoked by the <see cref="T:Zencoder.NotificationHandler"/>.
+            </summary>
+        </member>
+        <member name="M:Zencoder.INotificationReceiver.OnReceive(Zencoder.HttpPostNotification)">
+            <summary>
+            Called when a notification is received.
+            </summary>
+            <param name="notification">The notification that was received.</param>
+        </member>
+        <member name="T:Zencoder.InputMediaFile">
+            <summary>
+            Represents a single input media file in a <see cref="T:Zencoder.Job"/>.
+            </summary>
+        </member>
+        <member name="T:Zencoder.MediaFile">
+            <summary>
+            Represents a single input or output media file in a <see cref="T:Zencoder.Job"/>.
+            </summary>
+        </member>
+        <member name="P:Zencoder.MediaFile.AudioBitrateInKbps">
+            <summary>
+            Gets or sets the file's audio bitrate (in Kbps).
+            </summary>
+        </member>
+        <member name="P:Zencoder.MediaFile.AudioSampleRate">
+            <summary>
+            Gets or sets the file's audio sample rate.
+            </summary>
+        </member>
+        <member name="P:Zencoder.MediaFile.Channels">
+            <summary>
+            Gets or sets the number of audio channels in the file.
+            </summary>
+        </member>
+        <member name="P:Zencoder.MediaFile.CreatedAt">
+            <summary>
+            Gets or sets the date the file was created.
+            </summary>
+        </member>
+        <member name="P:Zencoder.MediaFile.DurationInMiliseconds">
+            <summary>
+            Gets or sets the file's duration (in ms).
+            </summary>
+        </member>
+        <member name="P:Zencoder.MediaFile.ErrorClass">
+            <summary>
+            Gets or sets the file's error class.
+            </summary>
+        </member>
+        <member name="P:Zencoder.MediaFile.ErrorMessage">
+            <summary>
+            Gets or sets the file's error message.
+            </summary>
+        </member>
+        <member name="P:Zencoder.MediaFile.FileSizeBytes">
+            <summary>
+            Gets or sets the file's size in bytes.
+            </summary>
+        </member>
+        <member name="P:Zencoder.MediaFile.FinishedAt">
+            <summary>
+            Gets or sets the date the file was finished.
+            </summary>
+        </member>
+        <member name="P:Zencoder.MediaFile.FrameRate">
+            <summary>
+            Gets or sets the file's frame rate.
+            </summary>
+        </member>
+        <member name="P:Zencoder.MediaFile.Height">
+            <summary>
+            Gets or sets the file's height.
+            </summary>
+        </member>
+        <member name="P:Zencoder.MediaFile.Id">
+            <summary>
+            Gets or sets the file's ID.
+            </summary>
+        </member>
+        <member name="P:Zencoder.MediaFile.TotalBitrateInKbps">
+            <summary>
+            Gets or sets the file's total bitrate (in Kbps).
+            </summary>
+        </member>
+        <member name="P:Zencoder.MediaFile.Test">
+            <summary>
+            Gets or sets a value indicating whether the file is in test mode.
+            </summary>
+        </member>
+        <member name="P:Zencoder.MediaFile.Url">
+            <summary>
+            Gets or sets the file's URL.
+            </summary>
+        </member>
+        <member name="P:Zencoder.MediaFile.UpdatedAt">
+            <summary>
+            Gets or sets the date the file was last updated.
+            </summary>
+        </member>
+        <member name="P:Zencoder.MediaFile.VideoBitrateInKbps">
+            <summary>
+            Gets or sets the file's video bitrate (in Kbps).
+            </summary>
+        </member>
+        <member name="P:Zencoder.MediaFile.Width">
+            <summary>
+            Gets or sets the file's width.
+            </summary>
+        </member>
+        <member name="P:Zencoder.InputMediaFile.AudioCodec">
+            <summary>
+            Gets or sets the file's audio codec.
+            </summary>
+        </member>
+        <member name="P:Zencoder.InputMediaFile.Format">
+            <summary>
+            Gets or sets the file's format.
+            </summary>
+        </member>
+        <member name="P:Zencoder.InputMediaFile.VideoCodec">
+            <summary>
+            Gets or sets the file's video codec.
+            </summary>
+        </member>
+        <member name="P:Zencoder.InputMediaFile.State">
+            <summary>
+            Gets or sets the file's state with respect to its parent job.
+            </summary>
+        </member>
+        <member name="T:Zencoder.InputState">
+            <summary>
+            Defines the possible <see cref="T:Zencoder.InputMediaFile"/> states.
+            </summary>
+        </member>
+        <member name="F:Zencoder.InputState.Unknown">
+            <summary>
+            Identifies that an unkown input state was received from the service.
+            </summary>
+        </member>
+        <member name="F:Zencoder.InputState.Cancelled">
+            <summary>
+            Identifies that the job the input belongs to has been cancelled.
+            </summary>
+        </member>
+        <member name="F:Zencoder.InputState.Failed">
+            <summary>
+            Identifies that the input failed to complete.
+            </summary>
+        </member>
+        <member name="F:Zencoder.InputState.Finished">
+            <summary>
+            Identifies that the input is finished.
+            </summary>
+        </member>
+        <member name="F:Zencoder.InputState.Pending">
+            <summary>
+            Identifies that the input is pending.
+            </summary>
+        </member>
+        <member name="F:Zencoder.InputState.Processing">
+            <summary>
+            Identifies that the input is processing.
+            </summary>
+        </member>
+        <member name="F:Zencoder.InputState.Waiting">
+            <summary>
+            Identifies that the input is waiting to be queued.
+            </summary>
+        </member>
+        <member name="T:Zencoder.Job">
+            <summary>
+            Represents an encoding job when getting job details and/or listing jobs.
+            </summary>
+        </member>
+        <member name="P:Zencoder.Job.CreatedAt">
+            <summary>
+            Gets or sets the date the job was created.
+            </summary>
+        </member>
+        <member name="P:Zencoder.Job.DownloadConnections">
+            <summary>
+            Gets or sets the number of simultaneous connections for Zencoder to use when
+            downloading in input file. When not specified, defaults to 5. Valid values range
+            from 0 to 25.
+            </summary>
+        </member>
+        <member name="P:Zencoder.Job.FinishedAt">
+            <summary>
+            Gets or sets the date the job was finished.
+            </summary>
+        </member>
+        <member name="P:Zencoder.Job.Grouping">
+            <summary>
+            Gets or sets an arbtrary string value to create a grouping for reporting purposes.
+            </summary>
+        </member>
+        <member name="P:Zencoder.Job.Id">
+            <summary>
+            Gets or sets the job ID.
+            </summary>
+        </member>
+        <member name="P:Zencoder.Job.InputMediaFile">
+            <summary>
+            Gets or sets the job's input media file.
+            </summary>
+        </member>
+        <member name="P:Zencoder.Job.Mock">
+            <summary>
+            Gets or sets a value indicating whether to mock the job, 
+            returning the normal response without actually creating a job.
+            </summary>
+        </member>
+        <member name="P:Zencoder.Job.OutputMediaFiles">
+            <summary>
+            Gets or sets the job's output media files.
+            </summary>
+        </member>
+        <member name="P:Zencoder.Job.PassThrough">
+            <summary>
+            Gets or sets an optional arbitrary string value to stor alongside the job.
+            </summary>
+        </member>
+        <member name="P:Zencoder.Job.Private">
+            <summary>
+            Gets or sets a value indicating whether privacy mode is enabled for the job.
+            </summary>
+        </member>
+        <member name="P:Zencoder.Job.State">
+            <summary>
+            Gets or sets the current job state.
+            </summary>
+        </member>
+        <member name="P:Zencoder.Job.SubmittedAt">
+            <summary>
+            Gets or sets the date the job was submitted.
+            </summary>
+        </member>
+        <member name="P:Zencoder.Job.Test">
+            <summary>
+            Gets or sets a value indicating whether the job is in test mode.
+            </summary>
+        </member>
+        <member name="P:Zencoder.Job.Thumbnails">
+            <summary>
+            Gets or sets the job's thumbnails.
+            </summary>
+        </member>
+        <member name="P:Zencoder.Job.UpdatedAt">
+            <summary>
+            Gets or sets the date the job was last updated.
+            </summary>
+        </member>
+        <member name="T:Zencoder.JobDetailsRequest">
+            <summary>
+            Implements the job details request.
+            </summary>
+        </member>
+        <member name="M:Zencoder.JobDetailsRequest.#ctor(Zencoder.Zencoder)">
+            <summary>
+            Initializes a new instance of the JobDetailsRequest class.
+            </summary>
+            <param name="zencoder">The <see cref="T:Zencoder.Zencoder"/> service to create the request with.</param>
+        </member>
+        <member name="M:Zencoder.JobDetailsRequest.#ctor(System.String,System.Uri)">
+            <summary>
+            Initializes a new instance of the JobDetailsRequest class.
+            </summary>
+            <param name="apiKey">The API key to use when connecting to the service.</param>
+            <param name="baseUrl">The service base URL.</param>
+        </member>
+        <member name="P:Zencoder.JobDetailsRequest.JobId">
+            <summary>
+            Gets or sets the ID of the job to get details for.
+            </summary>
+        </member>
+        <member name="P:Zencoder.JobDetailsRequest.Url">
+            <summary>
+            Gets the concrete URL this request will call.
+            </summary>
+        </member>
+        <member name="P:Zencoder.JobDetailsRequest.Verb">
+            <summary>
+            Gets the HTTP verb to use when making the request.
+            </summary>
+        </member>
+        <member name="T:Zencoder.JobDetailsResponse">
+            <summary>
+            Implements the job details response.
+            </summary>
+        </member>
+        <member name="P:Zencoder.JobDetailsResponse.Job">
+            <summary>
+            Gets or sets the job returned with the response.
+            </summary>
+        </member>
+        <member name="T:Zencoder.JobProgressRequest">
+            <summary>
+            Implements the job progress request.
+            </summary>
+        </member>
+        <member name="M:Zencoder.JobProgressRequest.#ctor(Zencoder.Zencoder)">
+            <summary>
+            Initializes a new instance of the JobProgressRequest class.
+            </summary>
+            <param name="zencoder">The <see cref="T:Zencoder.Zencoder"/> service to create the request with.</param>
+        </member>
+        <member name="M:Zencoder.JobProgressRequest.#ctor(System.String,System.Uri)">
+            <summary>
+            Initializes a new instance of the JobProgressRequest class.
+            </summary>
+            <param name="apiKey">The API key to use when connecting to the service.</param>
+            <param name="baseUrl">The service base URL.</param>
+        </member>
+        <member name="P:Zencoder.JobProgressRequest.OutputId">
+            <summary>
+            Gets or sets the ID of the <see cref="T:Zencoder.Output"/> to get progress for.
+            </summary>
+        </member>
+        <member name="P:Zencoder.JobProgressRequest.Url">
+            <summary>
+            Gets the concrete URL this request will call.
+            </summary>
+        </member>
+        <member name="P:Zencoder.JobProgressRequest.Verb">
+            <summary>
+            Gets the HTTP verb to use when making the request.
+            </summary>
+        </member>
+        <member name="T:Zencoder.JobProgressResponse">
+            <summary>
+            Implements the job progress response.
+            </summary>
+        </member>
+        <member name="P:Zencoder.JobProgressResponse.CurrentEvent">
+            <summary>
+            Gets or sets the event currently in progress for the output.
+            </summary>
+        </member>
+        <member name="P:Zencoder.JobProgressResponse.Progress">
+            <summary>
+            Gets or sets the progress of <see cref="P:Zencoder.JobProgressResponse.CurrentEvent"/>.
+            </summary>
+        </member>
+        <member name="P:Zencoder.JobProgressResponse.State">
+            <summary>
+            Gets or sets the output's current state.
+            </summary>
+        </member>
+        <member name="T:Zencoder.JobState">
+            <summary>
+            Defines the possible <see cref="T:Zencoder.Job"/> states.
+            </summary>
+        </member>
+        <member name="F:Zencoder.JobState.Unknown">
+            <summary>
+            Identifies that an unkown job state was received from the service.
+            </summary>
+        </member>
+        <member name="F:Zencoder.JobState.Cancelled">
+            <summary>
+            Identifies that the job has been cancelled.
+            </summary>
+        </member>
+        <member name="F:Zencoder.JobState.Failed">
+            <summary>
+            Identifies that the job failed to complete.
+            </summary>
+        </member>
+        <member name="F:Zencoder.JobState.Finished">
+            <summary>
+            Identifies that the job is finished.
+            </summary>
+        </member>
+        <member name="F:Zencoder.JobState.Pending">
+            <summary>
+            Identifies that the job is pending.
+            </summary>
+        </member>
+        <member name="F:Zencoder.JobState.Processing">
+            <summary>
+            Identifies that the job is processing.
+            </summary>
+        </member>
+        <member name="F:Zencoder.JobState.Waiting">
+            <summary>
+            Identifies that the job is waiting to be queued.
+            </summary>
+        </member>
+        <member name="T:Zencoder.JobWrapper">
+            <summary>
+            Wraps a <see cref="P:Zencoder.JobWrapper.Job"/> object for proper deserialization in a <see cref="T:Zencoder.ListJobsResponse"/>.
+            </summary>
+        </member>
+        <member name="P:Zencoder.JobWrapper.Job">
+            <summary>
+            Gets or sets the wrapper's job object.
+            </summary>
+        </member>
+        <member name="T:Zencoder.ListJobsRequest">
+            <summary>
+            Implements the list jobs request.
+            </summary>
+        </member>
+        <member name="M:Zencoder.ListJobsRequest.#ctor(Zencoder.Zencoder)">
+            <summary>
+            Initializes a new instance of the ListJobsRequest class.
+            </summary>
+            <param name="zencoder">The <see cref="T:Zencoder.Zencoder"/> service to create the request with.</param>
+        </member>
+        <member name="M:Zencoder.ListJobsRequest.#ctor(System.String,System.Uri)">
+            <summary>
+            Initializes a new instance of the ListJobsRequest class.
+            </summary>
+            <param name="apiKey">The API key to use when connecting to the service.</param>
+            <param name="baseUrl">The service base URL.</param>
+        </member>
+        <member name="M:Zencoder.ListJobsRequest.ForPage(System.Nullable{System.Int32},System.Nullable{System.Int32})">
+            <summary>
+            Sets this isntance's paging properties.
+            </summary>
+            <param name="pageNumber">The page number to set, or null to reset to the default.</param>
+            <param name="pageSize">The page size to set, or null to reset to the default.</param>
+            <returns>This instance.</returns>
+        </member>
+        <member name="P:Zencoder.ListJobsRequest.PageNumber">
+            <summary>
+            Gets or sets the page number to list.
+            </summary>
+        </member>
+        <member name="P:Zencoder.ListJobsRequest.PageSize">
+            <summary>
+            Gets or sets the page size to list.
+            </summary>
+        </member>
+        <member name="P:Zencoder.ListJobsRequest.Url">
+            <summary>
+            Gets the concrete URL this request will call.
+            </summary>
+        </member>
+        <member name="P:Zencoder.ListJobsRequest.Verb">
+            <summary>
+            Gets the HTTP verb to use when making the request.
+            </summary>
+        </member>
+        <member name="T:Zencoder.ListJobsResponse">
+            <summary>
+            Implements the list jobs response.
+            </summary>
+        </member>
+        <member name="M:Zencoder.ListJobsResponse.FromJson(System.String)">
+            <summary>
+            Creates a new <see cref="T:Zencoder.Response"/> instance from the given JSON string.
+            </summary>
+            <param name="json">A string of JSON representing the response.</param>
+            <returns>A <see cref="T:Zencoder.Response"/>.</returns>
+        </member>
+        <member name="M:Zencoder.ListJobsResponse.FromJson(System.IO.Stream)">
+            <summary>
+            Creates a new <see cref="T:Zencoder.Response"/> instance from the JSON data in the given stream.
+            </summary>
+            <param name="stream">The stream to create the response from.</param>
+            <returns>A <see cref="T:Zencoder.Response"/>.</returns>
+        </member>
+        <member name="P:Zencoder.ListJobsResponse.Jobs">
+            <summary>
+            Gets or sets the jobs returned with the response.
+            </summary>
+        </member>
+        <member name="T:Zencoder.MediaFileFormat">
+            <summary>
+            Defines the possible media file format containers.
+            </summary>
+        </member>
+        <member name="F:Zencoder.MediaFileFormat.MPFour">
+            <summary>
+            Identifies the MP4 format.
+            </summary>
+        </member>
+        <member name="F:Zencoder.MediaFileFormat.ThreeGTwo">
+            <summary>
+            Identifies the 3G2 format.
+            </summary>
+        </member>
+        <member name="F:Zencoder.MediaFileFormat.ThreeGP">
+            <summary>
+            Identifies the 3GP format.
+            </summary>
+        </member>
+        <member name="F:Zencoder.MediaFileFormat.ThreeGP2">
+            <summary>
+            Identifies the 3GP2 format.
+            </summary>
+        </member>
+        <member name="F:Zencoder.MediaFileFormat.ThreeGPP">
+            <summary>
+            Identifies the 3GPP format.
+            </summary>
+        </member>
+        <member name="F:Zencoder.MediaFileFormat.ThreeGPP2">
+            <summary>
+            Identifies the 3GPP2 format.
+            </summary>
+        </member>
+        <member name="F:Zencoder.MediaFileFormat.FFourA">
+            <summary>
+            Identifies the F4A format.
+            </summary>
+        </member>
+        <member name="F:Zencoder.MediaFileFormat.FFourB">
+            <summary>
+            Identifies the F4B format.
+            </summary>
+        </member>
+        <member name="F:Zencoder.MediaFileFormat.FFourV">
+            <summary>
+            Identifies the F4V format.
+            </summary>
+        </member>
+        <member name="F:Zencoder.MediaFileFormat.FLV">
+            <summary>
+            Identifies the FLV format.
+            </summary>
+        </member>
+        <member name="F:Zencoder.MediaFileFormat.MFourA">
+            <summary>
+            Identifies the M4A format.
+            </summary>
+        </member>
+        <member name="F:Zencoder.MediaFileFormat.MFourB">
+            <summary>
+            Identifies the M4B format.
+            </summary>
+        </member>
+        <member name="F:Zencoder.MediaFileFormat.MFourR">
+            <summary>
+            Identifies the M4R format.
+            </summary>
+        </member>
+        <member name="F:Zencoder.MediaFileFormat.MFourV">
+            <summary>
+            Identifies the M4V format.
+            </summary>
+        </member>
+        <member name="F:Zencoder.MediaFileFormat.MOV">
+            <summary>
+            Identifies the MOV format.
+            </summary>
+        </member>
+        <member name="F:Zencoder.MediaFileFormat.MPThree">
+            <summary>
+            Identifies the MP3 format.
+            </summary>
+        </member>
+        <member name="F:Zencoder.MediaFileFormat.OGA">
+            <summary>
+            Identifies the OGA format.
+            </summary>
+        </member>
+        <member name="F:Zencoder.MediaFileFormat.OGG">
+            <summary>
+            Identifies the OGG format.
+            </summary>
+        </member>
+        <member name="F:Zencoder.MediaFileFormat.OGV">
+            <summary>
+            Identifies the OGV format.
+            </summary>
+        </member>
+        <member name="F:Zencoder.MediaFileFormat.OGX">
+            <summary>
+            Identifies the OGX format.
+            </summary>
+        </member>
+        <member name="F:Zencoder.MediaFileFormat.TS">
+            <summary>
+            Identifies a segmented media file.
+            </summary>
+        </member>
+        <member name="F:Zencoder.MediaFileFormat.WEBM">
+            <summary>
+            Identifies the WEBM format.
+            </summary>
+        </member>
+        <member name="F:Zencoder.MediaFileFormat.WMA">
+            <summary>
+            Identifies the WMA format.
+            </summary>
+        </member>
+        <member name="F:Zencoder.MediaFileFormat.WMV">
+            <summary>
+            Identifies the WMV format.
+            </summary>
+        </member>
+        <member name="T:Zencoder.Output">
+            <summary>
+            Represents job output settings.
+            </summary>
+        </member>
+        <member name="M:Zencoder.Output.WithAccessControl(Zencoder.S3Access)">
+            <summary>
+            Appends the given S3 access control to this instance's <see cref="P:Zencoder.Output.AccessControl"/> collection.
+            </summary>
+            <param name="accessControl">The access controls to append.</param>
+            <returns>The instance.</returns>
+        </member>
+        <member name="M:Zencoder.Output.WithAccessControls(System.Collections.Generic.IEnumerable{Zencoder.S3Access})">
+            <summary>
+            Appends the given collection S3 access controls to this instance's <see cref="P:Zencoder.Output.AccessControl"/> collection.
+            </summary>
+            <param name="accessControls">The access controls to append.</param>
+            <returns>The instance.</returns>
+        </member>
+        <member name="M:Zencoder.Output.WithClip(System.Nullable{System.TimeSpan},System.Nullable{System.TimeSpan})">
+            <summary>
+            Sets this instance's clipping (<see cref="P:Zencoder.Output.StartClip"/> and <see cref="P:Zencoder.Output.ClipLength"/>) properties.
+            </summary>
+            <param name="startClip">The start clip to set.</param>
+            <param name="clipLength">The clip length to set.</param>
+            <returns>This instance.</returns>
+        </member>
+        <member name="M:Zencoder.Output.WithThumbnails(Zencoder.Thumbnails)">
+            <summary>
+            Sets this instance's <see cref="P:Zencoder.Output.Thumbnails"/> property.
+            </summary>
+            <param name="thumbnails">The thumbnails to set.</param>
+            <returns>This instance.</returns>
+        </member>
+        <member name="M:Zencoder.Output.WithThumbnails(System.Collections.Generic.IEnumerable{Zencoder.Thumbnails})">
+            <summary>
+            Sets this instance's <see cref="P:Zencoder.Output.Thumbnails"/> property.
+            </summary>
+            <param name="thumbnails">The thumbnails collection to set.</param>
+            <returns>This instance.</returns>
+        </member>
+        <member name="M:Zencoder.Output.WithUrl(System.Uri)">
+            <summary>
+            Sets the instance's <see cref="P:Zencoder.Output.Url"/> property.
+            </summary>
+            <param name="url">The URL to set.</param>
+            <returns>This instance.</returns>
+        </member>
+        <member name="M:Zencoder.Output.WithNotification(Zencoder.Notification)">
+            <summary>
+            Appends a <see cref="T:Zencoder.Notification"/> to this instance's <see cref="T:Zencoder.Notification"/> collection.
+            </summary>
+            <param name="notification">The notification to append.</param>
+            <returns>This instance.</returns>
+        </member>
+        <member name="M:Zencoder.Output.WithNotifications(System.Collections.Generic.IEnumerable{Zencoder.Notification})">
+            <summary>
+            Appends a collection of <see cref="T:Zencoder.Notification"/>s to this instance's <see cref="T:Zencoder.Notification"/> collection.
+            </summary>
+            <param name="notifications">The notifications to append.</param>
+            <returns>This instance.</returns>
+        </member>
+        <member name="M:Zencoder.Output.WithWatermark(Zencoder.Watermark)">
+            <summary>
+            Appends a <see cref="T:Zencoder.Watermark"/> to this instance's <see cref="T:Zencoder.Watermark"/> collection.
+            </summary>
+            <param name="watermark">The watermark to append.</param>
+            <returns>This instance.</returns>
+        </member>
+        <member name="M:Zencoder.Output.WithWatermarks(System.Collections.Generic.IEnumerable{Zencoder.Watermark})">
+            <summary>
+            Appends a collection of <see cref="T:Zencoder.Watermark"/>s to this instance's <see cref="T:Zencoder.Watermark"/> collection.
+            </summary>
+            <param name="watermarks">The watermarks to append.</param>
+            <returns>This instance.</returns>
+        </member>
+        <member name="P:Zencoder.Output.AccessControl">
+            <summary>
+            Gets or sets the collection of custom S3 access grants to apply to the output
+            if its destination is S3.
+            </summary>
+        </member>
+        <member name="P:Zencoder.Output.AspectMode">
+            <summary>
+            Gets or sets the aspect mode to use if the input aspect ratio does not
+            match the input aspect ratio.
+            </summary>
+        </member>
+        <member name="P:Zencoder.Output.AudioBitrate">
+            <summary>
+            Gets or sets the audio bitrate to use in Kbps. Should be a multiple of 16,
+            and lower than 160Kbps per channel (i.e., 320Kbps stereo).
+            Identifies that total bitrate, not per channel.
+            </summary>
+        </member>
+        <member name="P:Zencoder.Output.AudioChannels">
+            <summary>
+            Gets or sets the number of audio channels to use (1 or 2). Defaults to keep the number of
+            input channels, or reduce to 2.
+            </summary>
+        </member>
+        <member name="P:Zencoder.Output.AudioCodec">
+            <summary>
+            Gets or sets the audio codec to use. If encoding video and not set,
+            the output video codec will determine this value automatically unless specifically set.
+            </summary>
+        </member>
+        <member name="P:Zencoder.Output.AudioQuality">
+            <summary>
+            Gets or sets a target audio quality, from 1 to 5. 5 is the best
+            quality, but results in the largest files.
+            </summary>
+        </member>
+        <member name="P:Zencoder.Output.AudioSampleRate">
+            <summary>
+            Gets or sets the audio sample rate in Hz. Not recommended.
+            By default, the input sample rate will be used. Rates higher than 48,000 Hz
+            will be resampled to 48KHz.
+            </summary>
+        </member>
+        <member name="P:Zencoder.Output.AutoLevel">
+            <summary>
+            Gets or sets a value indicating whether to apply an auto-level filter to the output video.
+            </summary>
+        </member>
+        <member name="P:Zencoder.Output.BaseUrl">
+            <summary>
+            Gets or sets a directory to place the output file in, but not the file name.
+            If no <see cref="P:Zencoder.Output.FileName"/> is specified, a random one will be generated with the appropriate extension.
+            </summary>
+        </member>
+        <member name="P:Zencoder.Output.BitrateCap">
+            <summary>
+            Gets or sets the desired peak bitrate for the output video, without
+            forcing lower bitrates to be raised.
+            </summary>
+        </member>
+        <member name="P:Zencoder.Output.BufferSize">
+            <summary>
+            Gets or sets the buffer size. Used in conjuction with <see cref="P:Zencoder.Output.BitrateCap"/>, this should be determined by
+            your streaming server settings. For example, use 10,000 for iPhone.
+            </summary>
+        </member>
+        <member name="P:Zencoder.Output.ClipLength">
+            <summary>
+            Gets or sets the duration of the movie subclip to create.
+            </summary>
+        </member>
+        <member name="P:Zencoder.Output.ConstantBitrate">
+            <summary>
+            Gets or sets a value indicating whether to use constant bitrate (CBR) encoding.
+            Requires setting <see cref="P:Zencoder.Output.VideoBitrate"/>. Cannot be used in conjuction with <see cref="P:Zencoder.Output.Quality"/>.
+            </summary>
+        </member>
+        <member name="P:Zencoder.Output.Deblock">
+            <summary>
+            Gets or sets a value indicating whether to apply a deblocking filter to the output video.
+            </summary>
+        </member>
+        <member name="P:Zencoder.Output.Decimate">
+            <summary>
+            Gets or sets a value that acts as a divisor for the input frame rate.
+            Given an input frame rate of 20 and a decimate value of 2, the output frame rate will be 10.
+            </summary>
+        </member>
+        <member name="P:Zencoder.Output.Deinterlace">
+            <summary>
+            Gets or sets the deinterlace mode to use.
+            </summary>
+        </member>
+        <member name="P:Zencoder.Output.Denoise">
+            <summary>
+            Gets or sets the denoise filter to apply to the output video, if applicable.
+            </summary>
+        </member>
+        <member name="P:Zencoder.Output.DeviceProfile">
+            <summary>
+            Gets or sets a shortcut device profile to use for the output.
+            See https://app.zencoder.com/docs/api/encoding/general-output-settings/device-profile
+            for more details on device profiles.
+            </summary>
+        </member>
+        <member name="P:Zencoder.Output.FileName">
+            <summary>
+            Gets or sets the file name of the finished file. If supplied and <see cref="P:Zencoder.Output.BaseUrl"/>
+            is empty, Zencoder will store a file with this name in an S3 bucket for download.
+            </summary>
+        </member>
+        <member name="P:Zencoder.Output.FixedKeyframeInterval">
+            <summary>
+            Gets or sets a value indicating whether to enable or disable variability in keyframe
+            generation when using <see cref="P:Zencoder.Output.KeyframeInterval"/>. When not set, defaults to false,
+            allowing variability.
+            </summary>
+        </member>
+        <member name="P:Zencoder.Output.Format">
+            <summary>
+            Gets or sets the format of the output container to use. Only set this value if not inferring
+            the format from the output file name.
+            </summary>
+        </member>
+        <member name="P:Zencoder.Output.FrameRate">
+            <summary>
+            Gets or sets the output frame rate to use. Not recommended.
+            </summary>
+        </member>
+        <member name="P:Zencoder.Output.H264Level">
+            <summary>
+            Gets or sets the level to use when performing H264 encoding.
+            </summary>
+        </member>
+        <member name="P:Zencoder.Output.H264Profile">
+            <summary>
+            Gets or sets the profile to use when performing H264 encoding.
+            </summary>
+        </member>
+        <member name="P:Zencoder.Output.H264ReferenceFrames">
+            <summary>
+            Gets or sets the number of reference frames to use when performing H264 encoding.
+            </summary>
+        </member>
+        <member name="P:Zencoder.Output.Headers">
+            <summary>
+            Gets the custom header dictionary to send to Amazon S3, if applicable. Zencoder supports
+            the following subset of headers: Cache-Control, Content-Disposition, Content-Encoding,
+            Content-Type, Expires, x-amz-acl, x-amz-storage-class and x-amz-meta-*.
+            </summary>
+        </member>
+        <member name="P:Zencoder.Output.Height">
+            <summary>
+            Gets or sets the height of the output video, if applicable.
+            </summary>
+        </member>
+        <member name="P:Zencoder.Output.KeyframeInterval">
+            <summary>
+            Gets or sets the maximum number of frames between each keyframe.
+            Defaults to 250.
+            </summary>
+        </member>
+        <member name="P:Zencoder.Output.KeyframeRate">
+            <summary>
+            Gets or sets the number of keyframes per second. A value of 0.5 would result
+            in one keyframe every two seconds, a value of 3 would result in three keyframes
+            per second. Use this instead of <see cref="P:Zencoder.Output.KeyframeInterval"/> if desired, althouth
+            <see cref="P:Zencoder.Output.KeyframeInterval"/> takes precedence if both are set.
+            </summary>
+        </member>
+        <member name="P:Zencoder.Output.Label">
+            <summary>
+            Gets or sets a nickname to use for the output, if applicable.
+            </summary>
+        </member>
+        <member name="P:Zencoder.Output.MaxAudioSampleRate">
+            <summary>
+            Gets or sets a value indicating the maximum audio sample rate to use, rather than
+            forcing a specific sample rate. Value should be in Hz (e.g., 44100 for CD quality).
+            </summary>
+        </member>
+        <member name="P:Zencoder.Output.MaxFrameRate">
+            <summary>
+            Gets or sets the maximum frame rate (and therefore bitrate) to use,
+            rather than forcing a specific frame rate.
+            </summary>
+        </member>
+        <member name="P:Zencoder.Output.MaxVideoBitrate">
+            <summary>
+            Gets or sets the maximum average bitrate to use. Overiddes both <see cref="P:Zencoder.Output.Quality"/>
+            and <see cref="P:Zencoder.Output.VideoBitrate"/>.
+            </summary>
+        </member>
+        <member name="P:Zencoder.Output.Notifications">
+            <summary>
+            Gets or sets the collection of notifications to define for the output.
+            </summary>
+        </member>
+        <member name="P:Zencoder.Output.Onepass">
+            <summary>
+            Gets or sets a value indicating whether to force onepass encoding when
+            <see cref="P:Zencoder.Output.VideoBitrate"/> is set.
+            </summary>
+        </member>
+        <member name="P:Zencoder.Output.OutputType">
+            <summary>
+            Gets or sets the output type to use.
+            </summary>
+        </member>
+        <member name="P:Zencoder.Output.Public">
+            <summary>
+            Gets or sets a value indicating a shortcut S3 ACL granding READ permission to the AllUsers group,
+            if the output is being placed in S3.
+            </summary>
+        </member>
+        <member name="P:Zencoder.Output.Quality">
+            <summary>
+            Gets or sets the desired video output quality, from 1 to 5.
+            5 is almost lossless, but results in the largest files.
+            Defaults to 3.
+            </summary>
+        </member>
+        <member name="P:Zencoder.Output.Rotate">
+            <summary>
+            Gets or sets the degrees by which to explicitly rotate the video.
+            Setting to non-null will prevent auto rotation.
+            </summary>
+        </member>
+        <member name="P:Zencoder.Output.Rrs">
+            <summary>
+            Gets or sets a value indicating whether to pass the necessary headers to S3
+            if the destination S3 bucket is using Reduced Redundancy Storage. Only
+            application when storing outputs on S3.
+            </summary>
+        </member>
+        <member name="P:Zencoder.Output.SegmentSeconds">
+            <summary>
+            Gets or sets the maximum duration to use for each segment in segmented outputs.
+            </summary>
+        </member>
+        <member name="P:Zencoder.Output.Sharpen">
+            <summary>
+            Gets or sets a value indicating whether to apply a sharpen filter to the output video.
+            </summary>
+        </member>
+        <member name="P:Zencoder.Output.SkipAudio">
+            <summary>
+            Gets or sets a value indicating whether to skip the input audio track, if one is present.
+            </summary>
+        </member>
+        <member name="P:Zencoder.Output.SkipVideo">
+            <summary>
+            Gets or sets a value indicating whether to skip the input video track, if one is present.
+            </summary>
+        </member>
+        <member name="P:Zencoder.Output.Speed">
+            <summary>
+            Gets or sets the target transcoding speed, from 1 to 5.
+            1 is the slowest, resulting in the smallest file.
+            </summary>
+        </member>
+        <member name="P:Zencoder.Output.StartClip">
+            <summary>
+            Gets or sets the time to start creating a subclip of the movie at.
+            </summary>
+        </member>
+        <member name="P:Zencoder.Output.Streams">
+            <summary>
+            Gets or sets a collection of streams to be re-formatted as a playlist.
+            </summary>
+        </member>
+        <member name="P:Zencoder.Output.Strict">
+            <summary>
+            Gets or sets a value indicating whether to enable "strict" mode. Will cause jobs to fail with invalid encoding settings,
+            rather than having the service move bad parameters into valid ranges.
+            </summary>
+        </member>
+        <member name="P:Zencoder.Output.Thumbnails">
+            <summary>
+            Gets or sets a collection of thumbnails settings to use for the output.
+            </summary>
+        </member>
+        <member name="P:Zencoder.Output.Tuning">
+            <summary>
+            Gets or sets the tuning value to use when performing H264 encoding.
+            </summary>
+        </member>
+        <member name="P:Zencoder.Output.Upscale">
+            <summary>
+            Gets or sets a value indicating whether to scale the input
+            up to the output resolution if necessary.
+            </summary>
+        </member>
+        <member name="P:Zencoder.Output.Url">
+            <summary>
+            Gets or sets the destination for the output file. If an S3 bucket,
+            the bucket must have write permission enabled for aws@zencoder.com.
+            Can also be an FTP/SFTP server.
+            </summary>
+        </member>
+        <member name="P:Zencoder.Output.VideoBitrate">
+            <summary>
+            Gets or sets the desired output bitrate for the video, in Kbps, if applicable.
+            </summary>
+        </member>
+        <member name="P:Zencoder.Output.VideoCodec">
+            <summary>
+            Gets or sets the video codec to use for the output, if applicable.
+            </summary>
+        </member>
+        <member name="P:Zencoder.Output.Watermarks">
+            <summary>
+            Gets or sets the collection of watermarks to apply to the output video, if applicable.
+            </summary>
+        </member>
+        <member name="P:Zencoder.Output.Width">
+            <summary>
+            Gets or sets the width of the output video, if applicable.
+            </summary>
+        </member>
+        <member name="T:Zencoder.OutputEvent">
+            <summary>
+            Defines the possible <see cref="T:Zencoder.Output"/> progress events.
+            </summary>
+        </member>
+        <member name="F:Zencoder.OutputEvent.Unknown">
+            <summary>
+            Identifies that an unkown output event was received from the service.
+            </summary>
+        </member>
+        <member name="F:Zencoder.OutputEvent.Downloading">
+            <summary>
+            Identifies that the input is being downloaded.
+            </summary>
+        </member>
+        <member name="F:Zencoder.OutputEvent.Inspecting">
+            <summary>
+            Identifies that the input is being inspected.
+            </summary>
+        </member>
+        <member name="F:Zencoder.OutputEvent.Transcoding">
+            <summary>
+            Identifies that the output is being transcoded.
+            </summary>
+        </member>
+        <member name="F:Zencoder.OutputEvent.Uploading">
+            <summary>
+            Identifies that the output is being uploaded.
+            </summary>
+        </member>
+        <member name="T:Zencoder.OutputMediaFile">
+            <summary>
+            Represents a single output media file in a <see cref="T:Zencoder.Job"/>.
+            </summary>
+        </member>
+        <member name="P:Zencoder.OutputMediaFile.AudioCodec">
+            <summary>
+            Gets or sets the file's audio codec.
+            </summary>
+        </member>
+        <member name="P:Zencoder.OutputMediaFile.Format">
+            <summary>
+            Gets or sets the file's format.
+            </summary>
+        </member>
+        <member name="P:Zencoder.OutputMediaFile.State">
+            <summary>
+            Gets or sets the file's state with respect to its parent job.
+            </summary>
+        </member>
+        <member name="P:Zencoder.OutputMediaFile.VideoCodec">
+            <summary>
+            Gets or sets the file's video codec.
+            </summary>
+        </member>
+        <member name="T:Zencoder.OutputState">
+            <summary>
+            Defines the possible <see cref="T:Zencoder.OutputMediaFile"/> states.
+            </summary>
+        </member>
+        <member name="F:Zencoder.OutputState.Unknown">
+            <summary>
+            Identifies that an unkown output state was received from the service.
+            </summary>
+        </member>
+        <member name="F:Zencoder.OutputState.Assigning">
+            <summary>
+            Identifies that the output is being assigned.
+            </summary>
+        </member>
+        <member name="F:Zencoder.OutputState.Cancelled">
+            <summary>
+            Identifies that the job the output belongs to has been cancelled.
+            </summary>
+        </member>
+        <member name="F:Zencoder.OutputState.Failed">
+            <summary>
+            Identifies that the output failed to complete.
+            </summary>
+        </member>
+        <member name="F:Zencoder.OutputState.Finished">
+            <summary>
+            Identifies that the output is finished.
+            </summary>
+        </member>
+        <member name="F:Zencoder.OutputState.NoInput">
+            <summary>
+            Identifies that the output did not define an input.
+            </summary>
+        </member>
+        <member name="F:Zencoder.OutputState.Processing">
+            <summary>
+            Identifies that the output is processing.
+            </summary>
+        </member>
+        <member name="F:Zencoder.OutputState.Queued">
+            <summary>
+            Identifies that the output is queued for processing.
+            </summary>
+        </member>
+        <member name="F:Zencoder.OutputState.Waiting">
+            <summary>
+            Identifies that the output is waiting to be queued.
+            </summary>
+        </member>
+        <member name="T:Zencoder.OutputType">
+            <summary>
+            Defines the possible output types.
+            </summary>
+        </member>
+        <member name="F:Zencoder.OutputType.Standard">
+            <summary>
+            Identifies standard output.
+            </summary>
+        </member>
+        <member name="F:Zencoder.OutputType.Segmented">
+            <summary>
+            Identifies segmented output for Apple HTTP Live Streaming.
+            </summary>
+        </member>
+        <member name="F:Zencoder.OutputType.Playlist">
+            <summary>
+            Identifies that the output is the master M3U8 file
+            for a multi-bitrate output stream. Cannot be the only
+            output for a job.
+            </summary>
+        </member>
+        <member name="T:Zencoder.OutputVideoCodec">
+            <summary>
+            Defines the possible output video codecs.
+            </summary>
+        </member>
+        <member name="F:Zencoder.OutputVideoCodec.H264">
+            <summary>
+            Identifies the H.264 codec.
+            </summary>
+        </member>
+        <member name="F:Zencoder.OutputVideoCodec.Mpeg4">
+            <summary>
+            Identifies the MPEG4 codec.
+            </summary>
+        </member>
+        <member name="F:Zencoder.OutputVideoCodec.Theora">
+            <summary>
+            Identifies the Theora codec.
+            </summary>
+        </member>
+        <member name="F:Zencoder.OutputVideoCodec.VP6">
+            <summary>
+            Identifies the VP6 codec.
+            </summary>
+        </member>
+        <member name="F:Zencoder.OutputVideoCodec.VP6A">
+            <summary>
+            Identifies the VP6 codec w/ alpha layer.
+            </summary>
+        </member>
+        <member name="F:Zencoder.OutputVideoCodec.VP6F">
+            <summary>
+            Identifies the VP6 codec for flash video.
+            </summary>
+        </member>
+        <member name="F:Zencoder.OutputVideoCodec.VP8">
+            <summary>
+            Identifies the VP8 codec for Flash video.
+            </summary>
+        </member>
+        <member name="F:Zencoder.OutputVideoCodec.Wmv">
+            <summary>
+            Identifies the WMV codec.
+            </summary>
+        </member>
+        <member name="T:Zencoder.PlaylistStream">
+            <summary>
+            Represents a playlist stream definition, to be used when generating a playlist output.
+            </summary>
+        </member>
+        <member name="M:Zencoder.PlaylistStream.WithResolution(System.Int32,System.Int32)">
+            <summary>
+            Sets the <see cref="P:Zencoder.PlaylistStream.Resolution"/> property.
+            </summary>
+            <param name="width">The width, in pixels.</param>
+            <param name="height">The height, in pixels.</param>
+            <returns>This instance.</returns>
+        </member>
+        <member name="P:Zencoder.PlaylistStream.Bandwidth">
+            <summary>
+            Gets or sets the bandwidth of the playlist stream, in Kbps.
+            </summary>
+        </member>
+        <member name="P:Zencoder.PlaylistStream.Codecs">
+            <summary>
+            Gets or sets a comma-separated string of the codecs used in the stream in HTML5 format,
+            such as: "mp4a.40.2, avc1.42E01E".
+            </summary>
+        </member>
+        <member name="P:Zencoder.PlaylistStream.Path">
+            <summary>
+            Gets or sets the absolute or relative path to the stream's manifest file.
+            </summary>
+        </member>
+        <member name="P:Zencoder.PlaylistStream.Resolution">
+            <summary>
+            Gets or sets the resolution, such as 800x600, of a playlist stream.
+            </summary>
+        </member>
+        <member name="T:Zencoder.ResponseOutput">
+            <summary>
+            Represents an <see cref="T:Zencoder.Output"/> in a <see cref="T:Zencoder.CreateJobResponse"/>.
+            </summary>
+        </member>
+        <member name="P:Zencoder.ResponseOutput.Id">
+            <summary>
+            Gets or sets the output ID.
+            </summary>
+        </member>
+        <member name="T:Zencoder.ResubmitJobRequest">
+            <summary>
+            Implements the resubmit job request.
+            </summary>
+        </member>
+        <member name="M:Zencoder.ResubmitJobRequest.#ctor(Zencoder.Zencoder)">
+            <summary>
+            Initializes a new instance of the ResubmitJobRequest class.
+            </summary>
+            <param name="zencoder">The <see cref="T:Zencoder.Zencoder"/> service to create the request with.</param>
+        </member>
+        <member name="M:Zencoder.ResubmitJobRequest.#ctor(System.String,System.Uri)">
+            <summary>
+            Initializes a new instance of the ResubmitJobRequest class.
+            </summary>
+            <param name="apiKey">The API key to use when connecting to the service.</param>
+            <param name="baseUrl">The service base URL.</param>
+        </member>
+        <member name="P:Zencoder.ResubmitJobRequest.JobId">
+            <summary>
+            Gets or sets the ID of the job to resubmit.
+            </summary>
+        </member>
+        <member name="P:Zencoder.ResubmitJobRequest.Url">
+            <summary>
+            Gets the concrete URL this request will call.
+            </summary>
+        </member>
+        <member name="P:Zencoder.ResubmitJobRequest.Verb">
+            <summary>
+            Gets the HTTP verb to use when making the request.
+            </summary>
+        </member>
+        <member name="T:Zencoder.ResubmitJobResponse">
+            <summary>
+            Implements the resubmit job response.
+            </summary>
+        </member>
+        <member name="P:Zencoder.ResubmitJobResponse.InConflict">
+            <summary>
+            Gets a value indicating whether the service indicated that the resubmit request
+            was invalid because the job was not in the "finished" state.
+            </summary>
+        </member>
+        <member name="T:Zencoder.Rotate">
+            <summary>
+            Defines the possible output video rotations.
+            </summary>
+        </member>
+        <member name="F:Zencoder.Rotate.None">
+            <summary>
+            Identifies that auto-rotation is diabled.
+            </summary>
+        </member>
+        <member name="F:Zencoder.Rotate.Ninety">
+            <summary>
+            Identifies that the video is rotated 90 degrees.
+            </summary>
+        </member>
+        <member name="F:Zencoder.Rotate.OneEighty">
+            <summary>
+            Identifies that the video is rotated 180 degrees.
+            </summary>
+        </member>
+        <member name="F:Zencoder.Rotate.TwoSeventy">
+            <summary>
+            Identifies that the video is rotated 270 degrees.
+            </summary>
+        </member>
+        <member name="T:Zencoder.S3Access">
+            <summary>
+            Represents an AWS S3 permission grant.
+            </summary>
+        </member>
+        <member name="M:Zencoder.S3Access.WithPermission(Zencoder.S3Permission)">
+            <summary>
+            Appends the given <see cref="T:Zencoder.S3Permission"/> to this instance's <see cref="P:Zencoder.S3Access.Permissions"/> collection.
+            </summary>
+            <param name="permission">The permission to append.</param>
+            <returns>This instance.</returns>
+        </member>
+        <member name="M:Zencoder.S3Access.WithPermissions(System.Collections.Generic.IEnumerable{Zencoder.S3Permission})">
+            <summary>
+            Appends the given collection of <see cref="T:Zencoder.S3Permission"/>s to this instance's <see cref="P:Zencoder.S3Access.Permissions"/> collection.
+            </summary>
+            <param name="permissions">The permissions to append.</param>
+            <returns>This instance.</returns>
+        </member>
+        <member name="P:Zencoder.S3Access.Grantee">
+            <summary>
+            Gets or sets the grantee to grant permissions for.
+            Can be an AWS ID, an email address linked to an AWS account,
+            or a URL defining an AWS ACL group.
+            </summary>
+        </member>
+        <member name="P:Zencoder.S3Access.Permissions">
+            <summary>
+            Gets or sets the collection of permissions to grant this instance's grantee.
+            </summary>
+        </member>
+        <member name="T:Zencoder.S3Permission">
+            <summary>
+            Defines the possible Amazon S3 permissions.
+            </summary>
+        </member>
+        <member name="F:Zencoder.S3Permission.Read">
+            <summary>
+            Identifies the grantee has read permission for the resource.
+            </summary>
+        </member>
+        <member name="F:Zencoder.S3Permission.Write">
+            <summary>
+            Identifies the grantee has write permission for the resource.
+            </summary>
+        </member>
+        <member name="F:Zencoder.S3Permission.FullControl">
+            <summary>
+            Identifies the grantee has full-controll permission for the resource.
+            </summary>
+        </member>
+        <member name="T:Zencoder.Strings">
+            <summary>
+            Provides <see cref="T:System.String"/> extensions and helpers.
+            </summary>
+        </member>
+        <member name="M:Zencoder.Strings.FromLowercaseUnderscore(System.String)">
+            <summary>
+            Converts the lower_case_underscore string into a PascalCase or camelCalse string.
+            </summary>
+            <param name="value">The string to convert.</param>
+            <returns>The converted string.</returns>
+        </member>
+        <member name="M:Zencoder.Strings.FromLowercaseUnderscore(System.String,System.Boolean)">
+            <summary>
+            Converts the lower_case_underscore string into a PascalCase or camelCalse string.
+            </summary>
+            <param name="value">The string to convert.</param>
+            <param name="camel">A value indicating whether to convert to camelCalse. If false, will convert to PascalCase.</param>
+            <returns>The converted string.</returns>
+        </member>
+        <member name="M:Zencoder.Strings.ToLowercaseUnderscore(System.String)">
+            <summary>
+            Converts the camelCase or PascalCase string to a lower_case_underscore string.
+            </summary>
+            <param name="value">The string to convert.</param>
+            <returns>The converted string.</returns>
+        </member>
+        <member name="T:Zencoder.Thumbnail">
+            <summary>
+            Represents a thumbnail in a <see cref="T:Zencoder.Job"/>.
+            </summary>
+        </member>
+        <member name="P:Zencoder.Thumbnail.CreatedAt">
+            <summary>
+            Gets or sets date and time the thumbnail was created
+            </summary>
+        </member>
+        <member name="P:Zencoder.Thumbnail.FileSize">
+            <summary>
+            Gets or sets size of the thumbnail
+            </summary>
+        </member>
+        <member name="P:Zencoder.Thumbnail.Format">
+            <summary>
+            Gets or sets format of the thumbnail
+            </summary>
+        </member>
+        <member name="P:Zencoder.Thumbnail.GroupLabel">
+            <summary>
+            Gets or sets Group Label (Important if you have several thumbnail groups)
+            </summary>
+        </member>
+        <member name="P:Zencoder.Thumbnail.Height">
+            <summary>
+            Gets or sets height of the thumbnail
+            </summary>
+        </member>
+        <member name="P:Zencoder.Thumbnail.Id">
+            <summary>
+            Gets or sets ID of the thumbnail
+            </summary>
+        </member>
+        <member name="P:Zencoder.Thumbnail.UpdatedAt">
+            <summary>
+            Gets or sets date and time the thumbnail was updated
+            </summary>
+        </member>
+        <member name="P:Zencoder.Thumbnail.Url">
+            <summary>
+            Gets or sets url to retrieve the generated thumbnail
+            </summary>
+        </member>
+        <member name="P:Zencoder.Thumbnail.Width">
+            <summary>
+            Gets or sets width of the thumbnail
+            </summary>
+        </member>
+        <member name="T:Zencoder.ThumbnailFormat">
+            <summary>
+            Defines the possible thumbnail image formats.
+            </summary>
+        </member>
+        <member name="F:Zencoder.ThumbnailFormat.Png">
+            <summary>
+            Identifies the PNG thumbnail format.
+            </summary>
+        </member>
+        <member name="F:Zencoder.ThumbnailFormat.Jpg">
+            <summary>
+            Identifies the JPEG thumbnail format.
+            </summary>
+        </member>
+        <member name="T:Zencoder.Thumbnails">
+            <summary>
+            Represents thumbnail generation properties for an <see cref="T:Zencoder.Output"/>.
+            </summary>
+        </member>
+        <member name="M:Zencoder.Thumbnails.WithAccessControl(Zencoder.S3Access)">
+            <summary>
+            Appends the given S3 access control to this instance's <see cref="P:Zencoder.Thumbnails.AccessControl"/> collection.
+            </summary>
+            <param name="accessControl">The access controls to append.</param>
+            <returns>The instance.</returns>
+        </member>
+        <member name="M:Zencoder.Thumbnails.WithAccessControls(System.Collections.Generic.IEnumerable{Zencoder.S3Access})">
+            <summary>
+            Appends the given collection S3 access controls to this instance's <see cref="P:Zencoder.Thumbnails.AccessControl"/> collection.
+            </summary>
+            <param name="accessControls">The access controls to append.</param>
+            <returns>The instance.</returns>
+        </member>
+        <member name="M:Zencoder.Thumbnails.WithInterval(System.Int32)">
+            <summary>
+            Sets the <see cref="P:Zencoder.Thumbnails.Interval"/> property, resetting <see cref="P:Zencoder.Thumbnails.Number"/>, <see cref="P:Zencoder.Thumbnails.Times"/>
+            and <see cref="P:Zencoder.Thumbnails.IntervalInFrames"/>.
+            </summary>
+            <param name="seconds">The thumbnail interval in seconds.</param>
+            <returns>This instance.</returns>
+        </member>
+        <member name="M:Zencoder.Thumbnails.WithIntervalInFrames(System.Int32)">
+            <summary>
+            Sets the <see cref="P:Zencoder.Thumbnails.IntervalInFrames"/> property, resetting <see cref="P:Zencoder.Thumbnails.Number"/>, <see cref="P:Zencoder.Thumbnails.Times"/>
+            and <see cref="P:Zencoder.Thumbnails.Interval"/>.
+            </summary>
+            <param name="frames">The thumbnail interval in frames.</param>
+            <returns>This instance.</returns>
+        </member>
+        <member name="M:Zencoder.Thumbnails.WithNumber(System.Int32)">
+            <summary>
+            Sets the <see cref="P:Zencoder.Thumbnails.Number"/> property, reseting <see cref="P:Zencoder.Thumbnails.Interval"/>, <see cref="P:Zencoder.Thumbnails.Times"/>
+            and <see cref="P:Zencoder.Thumbnails.IntervalInFrames"/>.
+            </summary>
+            <param name="number">The number of thumbnails to generate.</param>
+            <returns>This instance.</returns>
+        </member>
+        <member name="M:Zencoder.Thumbnails.WithSize(System.Int32,System.Int32)">
+            <summary>
+            Sets the <see cref="P:Zencoder.Thumbnails.Width"/> and <see cref="P:Zencoder.Thumbnails.Height"/> properties.
+            </summary>
+            <param name="width">The width, in pixels.</param>
+            <param name="height">The height, in pixels.</param>
+            <returns>This instance.</returns>
+        </member>
+        <member name="M:Zencoder.Thumbnails.WithTimes(System.Collections.Generic.IEnumerable{System.Single})">
+            <summary>
+            Sets the <see cref="P:Zencoder.Thumbnails.Times"/> property, resetting <see cref="P:Zencoder.Thumbnails.Number"/>, <see cref="P:Zencoder.Thumbnails.Interval"/>
+            and <see cref="P:Zencoder.Thumbnails.IntervalInFrames"/>.
+            </summary>
+            <param name="times">A collection of thumbnail times, in fractional seconds.</param>
+            <returns>This instance.</returns>
+        </member>
+        <member name="P:Zencoder.Thumbnails.AccessControl">
+            <summary>
+            Gets or sets the collection of custom S3 access grants to apply to the thumbnails
+            if their destination is S3.
+            </summary>
+        </member>
+        <member name="P:Zencoder.Thumbnails.AspectMode">
+            <summary>
+            Gets or sets the aspect mode to use when creating thumbnails.
+            </summary>
+        </member>
+        <member name="P:Zencoder.Thumbnails.BaseUrl">
+            <summary>
+            Gets or sets an output destination for thumbnails. If blank, will use the corresponding <see cref="T:Zencoder.Output"/>'s
+            destination. If that is blank, they will be placed in the Zencoder S3 bucket.
+            </summary>
+        </member>
+        <member name="P:Zencoder.Thumbnails.FileName">
+            <summary>
+            Gets or sets the interpolated filename to use for thumbnails. The attributes available for interpolation include
+            number, padded-number, width, height and size. No file extension is necessary. Each attribute should be surrounded
+            by double curly-braces, e.g., {{number}}_{{width}}x{{height}}-thumbnail.
+            </summary>
+        </member>
+        <member name="P:Zencoder.Thumbnails.Format">
+            <summary>
+            Gets or sets the format to use for thumbnail images.
+            </summary>
+        </member>
+        <member name="P:Zencoder.Thumbnails.Headers">
+            <summary>
+            Gets the custom header dictionary to send to Amazon S3, if applicable. Zencoder supports
+            the following subset of headers: Cache-Control, Content-Disposition, Content-Encoding,
+            Content-Type, Expires, x-amz-acl, x-amz-storage-class and x-amz-meta-*.
+            </summary>
+        </member>
+        <member name="P:Zencoder.Thumbnails.Height">
+            <summary>
+            Gets or sets the height of the thumbnails, if applicable.
+            </summary>
+        </member>
+        <member name="P:Zencoder.Thumbnails.Interval">
+            <summary>
+            Gets or sets a thumbnail interval in seconds. A thumbnail will be generated
+            for every N seconds of the file. Should be exclusive of <see cref="P:Zencoder.Thumbnails.Number"/>,
+            <see cref="P:Zencoder.Thumbnails.Times"/> and <see cref="P:Zencoder.Thumbnails.IntervalInFrames"/>.
+            </summary>
+        </member>
+        <member name="P:Zencoder.Thumbnails.IntervalInFrames">
+            <summary>
+            Gets or sets the thumbnail interval in frames. A thumbnail will be generated for every N
+            frames of the file. Should be exclusive of <see cref="P:Zencoder.Thumbnails.Number"/>, <see cref="P:Zencoder.Thumbnails.Times"/>
+            and <see cref="P:Zencoder.Thumbnails.Interval"/>.
+            </summary>
+        </member>
+        <member name="P:Zencoder.Thumbnails.Label">
+            <summary>
+            Gets or sets the name for the thumbnail set. Required when creating multiple thumbnail sets from an output.
+            </summary>
+        </member>
+        <member name="P:Zencoder.Thumbnails.Number">
+            <summary>
+            Gets or sets the number of thumbnails to generate. The thumbnails will
+            be grabbed evenly across the duration of the file. Should be exclusive of
+            <see cref="P:Zencoder.Thumbnails.Interval"/>, <see cref="P:Zencoder.Thumbnails.Times"/> and <see cref="P:Zencoder.Thumbnails.IntervalInFrames"/>.
+            </summary>
+        </member>
+        <member name="P:Zencoder.Thumbnails.Prefix">
+            <summary>
+            Gets or sets the output file name prefix. The default is "frame", resulting in thumbnails named
+            "frame_0000.png", "frame_0001.png", etc. 
+            </summary>
+        </member>
+        <member name="P:Zencoder.Thumbnails.Public">
+            <summary>
+            Gets or sets a value indicating a shortcut S3 ACL granding READ permission to the AllUsers group,
+            if the thumbnails are being placed in S3.
+            </summary>
+        </member>
+        <member name="P:Zencoder.Thumbnails.Rrs">
+            <summary>
+            Gets or sets a value indicating whether to pass the necessary headers to S3
+            if the destination S3 bucket is using Reduced Redundancy Storage. Only
+            application when storing thumbnails on S3.
+            </summary>
+        </member>
+        <member name="P:Zencoder.Thumbnails.StartAtFirstFrame">
+            <summary>
+            Gets or sets a value indicating whether to begin taking thumbnails at the first frame
+            when using the <see cref="P:Zencoder.Thumbnails.Number"/> option.
+            </summary>
+        </member>
+        <member name="P:Zencoder.Thumbnails.Times">
+            <summary>
+            Gets or sets a collection of times, in fractional seconds, to generate
+            thumbnails for. Should be exclusive of
+            <see cref="P:Zencoder.Thumbnails.Interval"/>, <see cref="P:Zencoder.Thumbnails.Times"/> and <see cref="P:Zencoder.Thumbnails.IntervalInFrames"/>.
+            </summary>
+        </member>
+        <member name="P:Zencoder.Thumbnails.Width">
+            <summary>
+            Gets or sets the width of the thumbnails, if applicable.
+            </summary>
+        </member>
+        <member name="T:Zencoder.Tuning">
+            <summary>
+            Defines the possible H264 tuning values.
+            </summary>
+        </member>
+        <member name="F:Zencoder.Tuning.Film">
+            <summary>
+            Optimizes for most non-animated video.
+            </summary>
+        </member>
+        <member name="F:Zencoder.Tuning.Animation">
+            <summary>
+            Optimizes for animation.
+            </summary>
+        </member>
+        <member name="F:Zencoder.Tuning.Grain">
+            <summary>
+            Optimizes for film with high levels of grain.
+            </summary>
+        </member>
+        <member name="F:Zencoder.Tuning.Psnr">
+            <summary>
+            Uses peak signal-to-noise ratio to optimize quality.
+            </summary>
+        </member>
+        <member name="F:Zencoder.Tuning.Ssim">
+            <summary>
+            Uses structural similarity to optimize quality.
+            </summary>
+        </member>
+        <member name="F:Zencoder.Tuning.FastDecode">
+            <summary>
+            Reduces encoding complexity to allow for easier decoding.
+            </summary>
+        </member>
+        <member name="F:Zencoder.Tuning.ZeroLatency">
+            <summary>
+            Removes the internal H264 buffer to improve quality.
+            </summary>
+        </member>
+        <member name="T:Zencoder.Uris">
+            <summary>
+            Provides exteions to <see cref="T:System.Uri"/> objects.
+            </summary>
+        </member>
+        <member name="M:Zencoder.Uris.AppendPath(System.Uri,System.String)">
+            <summary>
+            Appends the given path to the URI.
+            </summary>
+            <param name="uri">The URI to append the path to.</param>
+            <param name="path">The path to append.</param>
+            <returns>The result URI.</returns>
+        </member>
+        <member name="M:Zencoder.Uris.Combine(System.String,System.String)">
+            <summary>
+            Combines the two URL parts with a URL path separator.
+            </summary>
+            <param name="first">The first part to combine.</param>
+            <param name="second">The second part to combine.</param>
+            <returns>The combined URL.</returns>
+        </member>
+        <member name="M:Zencoder.Uris.WithApiKey(System.Uri,System.String)">
+            <summary>
+            Sets the entire query string of the URI to the given API key.
+            </summary>
+            <param name="uri">The URI to set the query string of.</param>
+            <param name="apiKey">The API key value to set.</param>
+            <returns>The result URI.</returns>
+        </member>
+        <member name="M:Zencoder.Uris.WithPath(System.Uri,System.String)">
+            <summary>
+            Sets the path portion of the URI.
+            </summary>
+            <param name="uri">The URI to set the path portion of.</param>
+            <param name="path">The path to set.</param>
+            <returns>The result URI.</returns>
+        </member>
+        <member name="M:Zencoder.Uris.WithQuery(System.Uri,System.String,System.String)">
+            <summary>
+            Sets the entire query string of the URI to the given key/value pair.
+            </summary>
+            <param name="uri">The URI to set the query string of.</param>
+            <param name="key">The key to set.</param>
+            <param name="value">The value to set.</param>
+            <returns>The result URI.</returns>
+        </member>
+        <member name="M:Zencoder.Uris.WithQueryString(System.Uri,System.String)">
+            <summary>
+            Gets the entire query string of the URI to the given pre-encoded query string.
+            </summary>
+            <param name="uri">The URI to set the query string of.</param>
+            <param name="queryString">The query string to set.</param>
+            <returns>The result URI.</returns>
+        </member>
+        <member name="T:Zencoder.VideoCodec">
+            <summary>
+            Defines the possible output video codecs.
+            </summary>
+        </member>
+        <member name="F:Zencoder.VideoCodec.H264">
+            <summary>
+            Identifies the H.264 codec.
+            </summary>
+        </member>
+        <member name="F:Zencoder.VideoCodec.Mpeg4">
+            <summary>
+            Identifies the MPEG4 codec.
+            </summary>
+        </member>
+        <member name="F:Zencoder.VideoCodec.Theora">
+            <summary>
+            Identifies the Theora codec.
+            </summary>
+        </member>
+        <member name="F:Zencoder.VideoCodec.VP6">
+            <summary>
+            Identifies the VP6 codec.
+            </summary>
+        </member>
+        <member name="F:Zencoder.VideoCodec.VP8">
+            <summary>
+            Identifies the VP8 codec.
+            </summary>
+        </member>
+        <member name="F:Zencoder.VideoCodec.Wmv">
+            <summary>
+            Identifies the WMV codec.
+            </summary>
+        </member>
+        <member name="T:Zencoder.Watermark">
+            <summary>
+            Represents a watermark that will be placed on a video output.
+            </summary>
+        </member>
+        <member name="M:Zencoder.Watermark.WithPositionInPercent(System.Nullable{System.Int32},System.Nullable{System.Int32})">
+            <summary>
+            Sets this instance's position properties as percentage values.
+            </summary>
+            <param name="x">The x-axis percentage value to set.</param>
+            <param name="y">The y-axis percentage value to set.</param>
+            <returns>This instance.</returns>
+        </member>
+        <member name="M:Zencoder.Watermark.WithPositionInPixels(System.Nullable{System.Int32},System.Nullable{System.Int32})">
+            <summary>
+            Sets this instance's position properties as pixel values.
+            </summary>
+            <param name="x">The x-axis pixel value to set.</param>
+            <param name="y">The y-axis pixel value to set.</param>
+            <returns>This instance.</returns>
+        </member>
+        <member name="M:Zencoder.Watermark.WithSizeInPercent(System.Nullable{System.Int32},System.Nullable{System.Int32})">
+            <summary>
+            Sets this instance's size properties as percentage values.
+            </summary>
+            <param name="width">The width percentage value to set.</param>
+            <param name="height">The height percentage value to set.</param>
+            <returns>This instance.</returns>
+        </member>
+        <member name="M:Zencoder.Watermark.WithSizeInPixels(System.Nullable{System.Int32},System.Nullable{System.Int32})">
+            <summary>
+            Sets this instance's size properties as pixel values.
+            </summary>
+            <param name="width">The width pixel value to set.</param>
+            <param name="height">The height pixel value to set.</param>
+            <returns>This instance.</returns>
+        </member>
+        <member name="M:Zencoder.Watermark.WithUrl(System.Uri)">
+            <summary>
+            Sets this instance's <see cref="P:Zencoder.Watermark.Url"/> property.
+            </summary>
+            <param name="url">The URL to set.</param>
+            <returns>This instance.</returns>
+        </member>
+        <member name="P:Zencoder.Watermark.Height">
+            <summary>
+            Gets or sets the height of the watermark. Can be in pixels (e.g., 48)
+            or a percent of the video height (e.g., 10%). If set but no width is set,
+            the watermark will be scaled proportionally.
+            Defaults to scale to width, or original image height.
+            </summary>
+        </member>
+        <member name="P:Zencoder.Watermark.Origin">
+            <summary>
+            Gets or sets the origin type to use for watermark generation.
+            </summary>
+        </member>
+        <member name="P:Zencoder.Watermark.Url">
+            <summary>
+            Gets or sets the URL of the remote file to use as a watermark.
+            </summary>
+        </member>
+        <member name="P:Zencoder.Watermark.Width">
+            <summary>
+            Gets or sets the width of the watermark. Can be in pixels(e.g., 64)
+            or a percent of the video width (e.g., 10%). If set but no height is set,
+            the watermark will be scaled proportionally.
+            Defaults to scale to height, or original width.
+            </summary>
+        </member>
+        <member name="P:Zencoder.Watermark.X">
+            <summary>
+            Gets or sets a value indicating where to place the watermark in the video along the X axis.
+            Can be a number of pixels (e.g., 100 or -20) or a percent of the video width (e.g., 25% or -5%).
+            Use positive values to place relative to the left side of the video, negative to place relative
+            to the right side of the video. Use -0 to lock to the right side.
+            Defaults to -10.
+            </summary>
+        </member>
+        <member name="P:Zencoder.Watermark.Y">
+            <summary>
+            Gets or sets a value indicating where to place the watermark in the video along the Y axis.
+            Can be a number of pixels (e.g., 100 or -20) or a percent of the video width (e.g., 25% or -5%).
+            Use positive values to place relative to the top of the video, negative to place relative to the
+            bottom of the video. Use -0 to lock to the bottom.
+            Defaults to -10.
+            </summary>
+        </member>
+        <member name="T:Zencoder.WatermarkOrigin">
+            <summary>
+            Defines the possible watermark origin values.
+            </summary>
+        </member>
+        <member name="F:Zencoder.WatermarkOrigin.Content">
+            <summary>
+            Identifies that a watermark placement is based on the visible content
+            area of an output, not including padding.
+            </summary>
+        </member>
+        <member name="F:Zencoder.WatermarkOrigin.Frame">
+            <summary>
+            Identifies that watermark placement is based on the full resolution
+            of an output, including any padding.
+            </summary>
+        </member>
+        <member name="T:Zencoder.Zencoder">
+            <summary>
+            Provides API-wide Zencoder services.
+            </summary>
+        </member>
+        <member name="F:Zencoder.Zencoder.ApiKeyQueryKey">
+            <summary>
+            Gets the query string key used to identify the API key.
+            </summary>
+        </member>
+        <member name="F:Zencoder.Zencoder.ServiceUrl">
+            <summary>
+            Gets the default API base URL.
+            </summary>
+        </member>
+        <member name="M:Zencoder.Zencoder.#ctor">
+            <summary>
+            Initializes a new instance of the Zencoder class.
+            </summary>
+        </member>
+        <member name="M:Zencoder.Zencoder.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the Zencoder class.
+            </summary>
+            <param name="apiKey">The API key to use when connecting to the service.</param>
+        </member>
+        <member name="M:Zencoder.Zencoder.#ctor(System.String,System.Uri)">
+            <summary>
+            Initializes a new instance of the Zencoder class.
+            </summary>
+            <param name="apiKey">The API key to use when connecting to the service.</param>
+            <param name="baseUrl">The service base URL.</param>
+        </member>
+        <member name="M:Zencoder.Zencoder.CreateAccount(System.String,System.String,System.String,System.Nullable{System.Boolean},System.Nullable{System.Boolean})">
+            <summary>
+            A blocking create account request/response cycle.
+            </summary>
+            <param name="email">The email address to create the account with.</param>
+            <param name="password">The password to create the account with.</param>
+            <param name="affiliateCode">The affiliate code to create the account with, if applicable.</param>
+            <param name="termsOfService">A value indicating whether the terms of service are agreed to.</param>
+            <param name="newsletter">A value indicating whether to subscribe the email address to the newsletter.</param>
+            <returns>The call response.</returns>
+        </member>
+        <member name="M:Zencoder.Zencoder.CreateAccount(System.String,System.String,System.String,System.Nullable{System.Boolean},System.Nullable{System.Boolean},System.Uri)">
+            <summary>
+            A blocking create account request/response cycle.
+            </summary>
+            <param name="email">The email address to create the account with.</param>
+            <param name="password">The password to create the account with.</param>
+            <param name="affiliateCode">The affiliate code to create the account with, if applicable.</param>
+            <param name="termsOfService">A value indicating whether the terms of service are agreed to.</param>
+            <param name="newsletter">A value indicating whether to subscribe the email address to the newsletter.</param>
+            <param name="baseUrl">The service base URL.</param>
+            <returns>The call response.</returns>
+        </member>
+        <member name="M:Zencoder.Zencoder.CreateAccount(System.String,System.String,System.String,System.Nullable{System.Boolean},System.Nullable{System.Boolean},System.Action{Zencoder.CreateAccountResponse})">
+            <summary>
+            A non blocking create account request/response cycle.
+            </summary>
+            <param name="email">The email address to create the account with.</param>
+            <param name="password">The password to create the account with.</param>
+            <param name="affiliateCode">The affiliate code to create the account with, if applicable.</param>
+            <param name="termsOfService">A value indicating whether the terms of service are agreed to.</param>
+            <param name="newsletter">A value indicating whether to subscribe the email address to the newsletter.</param>
+            <param name="callback">The call response.</param>
+        </member>
+        <member name="M:Zencoder.Zencoder.CreateAccount(System.String,System.String,System.String,System.Nullable{System.Boolean},System.Nullable{System.Boolean},System.Uri,System.Action{Zencoder.CreateAccountResponse})">
+            <summary>
+            A non blocking create account request/response cycle.
+            </summary>
+            <param name="email">The email address to create the account with.</param>
+            <param name="password">The password to create the account with.</param>
+            <param name="affiliateCode">The affiliate code to create the account with, if applicable.</param>
+            <param name="termsOfService">A value indicating whether the terms of service are agreed to.</param>
+            <param name="newsletter">A value indicating whether to subscribe the email address to the newsletter.</param>
+            <param name="baseUrl">The service base URL.</param>
+            <param name="callback">The call response.</param>
+        </member>
+        <member name="M:Zencoder.Zencoder.AccountDetails">
+            <summary>
+            A blocking account details request/response cycle.
+            </summary>
+            <returns>The call response.</returns>
+        </member>
+        <member name="M:Zencoder.Zencoder.AccountDetails(System.Action{Zencoder.AccountDetailsResponse})">
+            <summary>
+            A non blocking account details request/response cycle.
+            </summary>
+            <param name="callback">The call response.</param>
+        </member>
+        <member name="M:Zencoder.Zencoder.AccountIntegrationMode(System.Boolean)">
+            <summary>
+            A blocking account integration mode request/response cycle.
+            </summary>
+            <param name="enable">A value indicating whether to enable integration mode for the account.</param>
+            <returns>The call response.</returns>
+        </member>
+        <member name="M:Zencoder.Zencoder.AccountIntegrationMode(System.Boolean,System.Action{Zencoder.AccountIntegrationModeResponse})">
+            <summary>
+            A non blocking account integration mode request/response cycle.
+            </summary>
+            <param name="enable">A value indicating whether to enable integration mode for the account.</param>
+            <param name="callback">The call response.</param>
+        </member>
+        <member name="M:Zencoder.Zencoder.CancelJob(System.Int32)">
+            <summary>
+            A blocking cancel job request/response cycle.
+            </summary>
+            <param name="jobId">The ID of the job to cancel.</param>
+            <returns>The call response.</returns>
+        </member>
+        <member name="M:Zencoder.Zencoder.CancelJob(System.Int32,System.Action{Zencoder.CancelJobResponse})">
+            <summary>
+            A blocking cancel request/response cycle.
+            </summary>
+            <param name="jobId">The ID of the job to cancel.</param>
+            <param name="callback">The call response.</param>
+        </member>
+        <member name="M:Zencoder.Zencoder.CreateJob(System.String,System.Collections.Generic.IEnumerable{Zencoder.Output})">
+            <summary>
+            A blocking create job request/response cycle.
+            </summary>
+            <param name="input">The URL of the input file.</param>
+            <param name="outputs">The output definition collection.</param>
+            <returns>The call response.</returns>
+        </member>
+        <member name="M:Zencoder.Zencoder.CreateJob(System.String,System.Collections.Generic.IEnumerable{Zencoder.Output},System.Action{Zencoder.CreateJobResponse})">
+            <summary>
+            A non blocking create job request/response cycle.
+            </summary>
+            <param name="input">The URL of the input file.</param>
+            <param name="outputs">The output definition collection.</param>
+            <param name="callback">The call response.</param>
+        </member>
+        <member name="M:Zencoder.Zencoder.CreateJob(System.String,System.Collections.Generic.IEnumerable{Zencoder.Output},System.Nullable{System.Int32},System.String,System.Nullable{System.Boolean},System.Nullable{System.Boolean})">
+            <summary>
+            A blocking create job request/response cycle.
+            </summary>
+            <param name="input">The URL of the input file.</param>
+            <param name="outputs">The output definition collection.</param>
+            <param name="downloadConnections">The number of download connections to use when fetching the input file.</param>
+            <param name="region">The region to perform the job in.</param>
+            <param name="test">A value indicating whether to use test mode.</param>
+            <param name="mock">A value indicating whether to mock the response rather than actually creating a job.</param>
+            <returns>The call response.</returns>
+        </member>
+        <member name="M:Zencoder.Zencoder.CreateJob(System.String,System.Collections.Generic.IEnumerable{Zencoder.Output},System.Nullable{System.Int32},System.String,System.Nullable{System.Boolean},System.Nullable{System.Boolean},System.Action{Zencoder.CreateJobResponse})">
+            <summary>
+            A blocking create job request/response cycle.
+            </summary>
+            <param name="input">The URL of the input file.</param>
+            <param name="outputs">The output definition collection.</param>
+            <param name="downloadConnections">The number of download connections to use when fetching the input file.</param>
+            <param name="region">The region to perform the job in.</param>
+            <param name="test">A value indicating whether to use test mode.</param>
+            <param name="mock">A value indicating whether to mock the response rather than actually creating a job.</param>
+            <param name="callback">The call response.</param>
+        </member>
+        <member name="M:Zencoder.Zencoder.DeleteJob(System.Int32)">
+            <summary>
+            A blocking delete job request/response cycle.
+            </summary>
+            <param name="jobId">The ID of the job to delete.</param>
+            <returns>The call response.</returns>
+        </member>
+        <member name="M:Zencoder.Zencoder.DeleteJob(System.Int32,System.Action{Zencoder.DeleteJobResponse})">
+            <summary>
+            A blocking delete request/response cycle.
+            </summary>
+            <param name="jobId">The ID of the job to delete.</param>
+            <param name="callback">The call response.</param>
+        </member>
+        <member name="M:Zencoder.Zencoder.JobDetails(System.Int32)">
+            <summary>
+            A blocking job details request/response cycle.
+            </summary>
+            <param name="jobId">The ID of the job to get details for.</param>
+            <returns>The call response.</returns>
+        </member>
+        <member name="M:Zencoder.Zencoder.JobDetails(System.Int32,System.Action{Zencoder.JobDetailsResponse})">
+            <summary>
+            A blocking job details request/response cycle.
+            </summary>
+            <param name="jobId">The ID of the job to get details for.</param>
+            <param name="callback">The call response.</param>
+        </member>
+        <member name="M:Zencoder.Zencoder.JobProgress(System.Int32)">
+            <summary>
+            A blocking job progress request/response cycle.
+            </summary>
+            <param name="outputId">The ID of the output (NOT the job ID) to get progress for.</param>
+            <returns>The call response.</returns>
+        </member>
+        <member name="M:Zencoder.Zencoder.JobProgress(System.Int32,System.Action{Zencoder.JobProgressResponse})">
+            <summary>
+            A non blocking job progress request/response cycle.
+            </summary>
+            <param name="outputId">The ID of the output (NOT the job ID) to get progress for.</param>
+            <param name="callback">The call response.</param>
+        </member>
+        <member name="M:Zencoder.Zencoder.ListJobs">
+            <summary>
+            A blocking list jobs request/response cycle.
+            </summary>
+            <returns>The call response.</returns>
+        </member>
+        <member name="M:Zencoder.Zencoder.ListJobs(System.Action{Zencoder.ListJobsResponse})">
+            <summary>
+            A non blocking list jobs request/response cycle.
+            </summary>
+            <param name="callback">The call response.</param>
+        </member>
+        <member name="M:Zencoder.Zencoder.ListJobs(System.Nullable{System.Int32},System.Nullable{System.Int32})">
+            <summary>
+            A blocking list jobs request/response cycle.
+            </summary>
+            <param name="pageNumber">The page number of jobs to list, if applicable.</param>
+            <param name="pageSize">The page size of jobs to list, if applicable.</param>
+            <returns>The call response.</returns>
+        </member>
+        <member name="M:Zencoder.Zencoder.ListJobs(System.Nullable{System.Int32},System.Nullable{System.Int32},System.Action{Zencoder.ListJobsResponse})">
+            <summary>
+            A non blocking list jobs request/response cycle.
+            </summary>
+            <param name="pageNumber">The page number of jobs to list, if applicable.</param>
+            <param name="pageSize">The page size of jobs to list, if applicable.</param>
+            <param name="callback">The call response.</param>
+        </member>
+        <member name="M:Zencoder.Zencoder.ResubmitJob(System.Int32)">
+            <summary>
+            A blocking resubmit job request/response cycle.
+            </summary>
+            <param name="jobId">The ID of the job to resubmit.</param>
+            <returns>The call response.</returns>
+        </member>
+        <member name="M:Zencoder.Zencoder.ResubmitJob(System.Int32,System.Action{Zencoder.ResubmitJobResponse})">
+            <summary>
+            A blocking resubmit job request/response cycle.
+            </summary>
+            <param name="jobId">The ID of the job to resubmit.</param>
+            <param name="callback">The call response.</param>
+        </member>
+        <member name="P:Zencoder.Zencoder.ApiKey">
+            <summary>
+            Gets the API key to use when connecting to the service.
+            </summary>
+        </member>
+        <member name="P:Zencoder.Zencoder.BaseUrl">
+            <summary>
+            Gets the service base URL.
+            </summary>
+        </member>
+        <member name="T:Zencoder.NotificationHandler">
+            <summary>
+            Implements <see cref="T:System.Web.IHttpHandler"/> for receiving Zencoder notifications.
+            </summary>
+        </member>
+        <member name="M:Zencoder.NotificationHandler.CreateReceiver(System.String)">
+            <summary>
+            Creates a <see cref="T:Zencoder.INotificationReceiver"/> from the given type name.
+            </summary>
+            <param name="typeName">The name of the type to create the receiver from.</param>
+            <returns>The created receiver.</returns>
+        </member>
+        <member name="M:Zencoder.NotificationHandler.ProcessRequest(System.Web.HttpContextBase)">
+            <summary>
+            Processes the request for the given context.
+            </summary>
+            <param name="context">The request context to process.</param>
+        </member>
+        <member name="M:Zencoder.NotificationHandler.ProcessRequest(System.Web.HttpContext)">
+            <summary>
+            Processes the request for the given context.
+            </summary>
+            <param name="context">The request context to process.</param>
+        </member>
+        <member name="P:Zencoder.NotificationHandler.Receivers">
+            <summary>
+            Gets a list of current notification receivers.
+            This list is intialized on first access from the configuration.
+            </summary>
+        </member>
+        <member name="P:Zencoder.NotificationHandler.IsReusable">
+            <summary>
+            Gets a value indicating whether this <see cref="T:System.Web.IHttpHandler"/> is reusable.
+            </summary>
+        </member>
+        <member name="T:Zencoder.NotificationHandler.AsyncNotify">
+            <summary>
+            Delegate for calling an <see cref="T:Zencoder.INotificationReceiver"/>'s 
+            <see cref="M:Zencoder.INotificationReceiver.OnReceive(Zencoder.HttpPostNotification)"/> method.
+            </summary>
+            <param name="notification">The notification object to send.</param>
+        </member>
+        <member name="T:Zencoder.ZencoderSettings">
+            <summary>
+            Implements <see cref="T:System.Configuration.ConfigurationSection"/> for the Zencoder configuration settings.
+            </summary>
+        </member>
+        <member name="M:Zencoder.ZencoderSettings.IsReadOnly">
+            <summary>
+            Gets a value indicating whether this ConfigurationSection is read only.
+            </summary>
+            <returns>True if the section is read only, false otherwise.</returns>
+        </member>
+        <member name="P:Zencoder.ZencoderSettings.Section">
+            <summary>
+            Gets the configuration section from the current configuration.
+            </summary>
+        </member>
+        <member name="P:Zencoder.ZencoderSettings.ApiKey">
+            <summary>
+            Gets or sets the default API to use.
+            </summary>
+        </member>
+        <member name="P:Zencoder.ZencoderSettings.Notifications">
+            <summary>
+            Gets a collection of named types that implement <see cref="T:Zencoder.INotificationReceiver"/> that should be 
+            notifiied when a notification is received.
+            </summary>
+        </member>
+    </members>
+</doc>
