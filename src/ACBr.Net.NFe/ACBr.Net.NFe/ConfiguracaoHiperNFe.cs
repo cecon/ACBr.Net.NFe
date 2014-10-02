@@ -1,8 +1,4 @@
 ﻿using ACBr.Net.NFe.TiposBasicos;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 
 namespace ACBr.Net.NFe

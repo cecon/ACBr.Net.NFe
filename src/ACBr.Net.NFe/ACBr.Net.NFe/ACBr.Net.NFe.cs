@@ -1,6 +1,12 @@
-﻿using System;
+﻿/*
+ * Refatorado por Eduardo Cecon Mendonça em 02/10/2014
+ * Adicionei um NAMESPACE pois faz parte da boa pratica alem de 
+ * refatorar todos os métodos e propriedades que estavam em desacordo 
+ * com o style guide do C#
+ */
+using System;
 using System.Collections.Generic;
-using System.Data;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net.Mail;
@@ -8,86 +14,55 @@ using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Xml;
-using System.Xml.Linq;
 using System.Xml.Schema;
-using CrystalDecisions.CrystalReports.Engine;
-using CrystalDecisions.Shared;
-using FuncoesUteis;
-using ACBr.Net.NFe;
-using ACBr.Net.NFe.DANFE;
-using ACBr.Net.NFe.ImpressaoCartaCorrecao;
-using ACBr.Net.NFe.TiposBasicos;
-using ACBr.Net.NFe.Webservice;
 using ACBr.Net.NFe.DownloadNFe;
+using ACBr.Net.NFe.TiposBasicos;
+using ACBr.Net.NFe.Util;
+using ACBr.Net.NFe.Webservice;
+using FuncoesUteis;
 
-
-public class HiperNFe
+namespace ACBr.Net.NFe
 {
-    private X509Certificate2 _Certificado;
-    private List<TNfeProc> _NotasFiscais;
-    private static List<string> _Erros;
-    private ConfiguracaoHiperNFe _Configuracao;
-
-    public HiperNFe()
+    public class HiperNFe
     {
+        private readonly CultureInfo _ptBr = CultureInfo.GetCultureInfo("pt-BR");
+        private X509Certificate2 _certificado;
+        private List<TNfeProc> _notasFiscais;
+        private ConfiguracaoHiperNFe _configuracao;
 
-    }
+        public static List<string> Erros { get; set; }
 
-    public static List<string> Erros
-    {
-        get { return HiperNFe._Erros; }
-        set { HiperNFe._Erros = value; }
-    }
-
-    public ConfiguracaoHiperNFe Configuracao
-    {
-        get
+        public ConfiguracaoHiperNFe Configuracao
         {
-            if (_Configuracao == null)
-            {
-                _Configuracao = new ConfiguracaoHiperNFe();
-            }
-            return _Configuracao;
+            get { return _configuracao ?? (_configuracao = new ConfiguracaoHiperNFe()); }
+            set { _configuracao = value; }
         }
-        set { _Configuracao = value; }
-    }
 
-    public List<TNfeProc> NotasFiscais
-    {
-        get
+        public List<TNfeProc> NotasFiscais
         {
-            if (_NotasFiscais == null)
-            {
-                _NotasFiscais = new List<TNfeProc>();
-            }
-            return _NotasFiscais;
+            get { return _notasFiscais ?? (_notasFiscais = new List<TNfeProc>()); }
+            set { _notasFiscais = value; }
         }
-        set { _NotasFiscais = value; }
-    }
 
-    public X509Certificate2 Certificado
-    {
-        get
+        public X509Certificate2 Certificado
         {
-            if (_Certificado == null)
+            get
             {
-                _Certificado = CertificadoDigital.SelecionarCertificado(Configuracao.NumCertificado);
+                return _certificado ??
+                       (_certificado = CertificadoDigital.SelecionarCertificado(Configuracao.NumCertificado));
             }
-            return _Certificado;
+            set { _certificado = value; }
         }
-        set { _Certificado = value; }
-    }
 
-    public TRetConsReciNFe ConsultarLote(TConsReciNFe consRecibo, TRetEnviNFe retEnvio)
-    {
-        C_WebService ws = new C_WebService(Configuracao.PastaLog);
-        TRetConsReciNFe reciboNFe = default(TRetConsReciNFe);
-        reciboNFe = ws.ConsultaRecLote2(consRecibo, retEnvio, Certificado);
-        if (reciboNFe.protNFe != null)
+        public TRetConsReciNFe ConsultarLote(TConsReciNFe consRecibo, TRetEnviNFe retEnvio)
         {
+            var ws = new C_WebService(Configuracao.PastaLog);
+            var reciboNFe = ws.ConsultaRecLote2(consRecibo, retEnvio, Certificado);
+            if (reciboNFe.protNFe == null) return reciboNFe;
             foreach (var item in reciboNFe.protNFe)
             {
-                TNfeProc nota = NotasFiscais.FirstOrDefault(n => n.NFe.infNFe.Id == "NFe" + item.infProt.chNFe);
+                var nota = NotasFiscais.FirstOrDefault(n => n.NFe.infNFe.Id == "NFe" + item.infProt.chNFe);
+                if (nota == null) continue;
                 nota.protNFe = item;
 
                 if (item.infProt.cStat == "100")
@@ -95,317 +70,351 @@ public class HiperNFe
                     SalvarNFe(ref nota);
                 }
             }
+            return reciboNFe;
         }
-        return reciboNFe;
-    }
 
-    public TRetConsReciNFe Enviar(int NumeroLote)
-    {
-        C_WebService ws = new C_WebService(Configuracao.PastaLog);
-        TRetEnviNFe retEnvio = ws.EnviaLote2(this, NumeroLote);
-        TConsReciNFe consRecibo = new TConsReciNFe();
-        consRecibo.nRec = retEnvio.infRec.nRec;
-        consRecibo.tpAmb = retEnvio.tpAmb;
-        consRecibo.versao = retEnvio.versao;
-        System.Threading.Thread.Sleep(5000);
-        try
+        public TRetConsReciNFe Enviar(int numeroLote)
         {
-            return ConsultarLote(consRecibo, retEnvio);
+            var ws = new C_WebService(Configuracao.PastaLog);
+            var retEnvio = ws.EnviaLote2(this, numeroLote);
+            var consRecibo = new TConsReciNFe
+            {
+                nRec = retEnvio.infRec.nRec,
+                tpAmb = retEnvio.tpAmb,
+                versao = retEnvio.versao
+            };
+            System.Threading.Thread.Sleep(5000);
+            try
+            {
+                return ConsultarLote(consRecibo, retEnvio);
+            }
+            catch (Exception)
+            {
+                System.Threading.Thread.Sleep(3000);
+                return ConsultarLote(consRecibo, retEnvio);
+            }
         }
-        catch (Exception)
+
+        public TRetConsStatServ StatusServico()
         {
-            System.Threading.Thread.Sleep(3000);
-            return ConsultarLote(consRecibo, retEnvio);
-        }
-    }
+            if (!Directory.Exists(Configuracao.PastaLog))
+            {
+                Directory.CreateDirectory(Configuracao.PastaLog);
+            }
 
-    public TRetConsStatServ StatusServico()
-    {
-        if (!Directory.Exists(Configuracao.PastaLog))
+            /*Comentei pois não estava sendo utilizado*/
+            //var listaURL = default(C_WebService.ListaUrl);            
+            //listaURL = WsUrls.BuscaURL(Configuracao.CodUF, Configuracao.Ambiente);
+
+            /*
+             * Mantive pos não sei se precisa executar, porem o retorno 
+             * não esta sendo utilizado em lugar nenhum
+             */
+            WsUrls.BuscaURL(Configuracao.CodUF, Configuracao.Ambiente);
+            var ws = new C_WebService(Configuracao.PastaLog);
+            var consStatus = new TConsStatServ
+            {
+                tpAmb = Configuracao.Ambiente,
+                versao = Configuracao.Versao,
+                cUF = Configuracao.CodUF
+            };
+
+            try
+            {
+                return ws.ConsultaStatusWs(consStatus, Certificado);
+            }
+            catch (Exception)
+            {
+                throw new Exception("Não foi possível consultar o status do servidor da Receita Federal. Favor tentar novamente.");
+            }
+        }
+
+        public static TRetDownloadNFe DownloadNFe(TDownloadNFe downloadNFe, string codUF, X509Certificate2 cert)
         {
-            Directory.CreateDirectory(Configuracao.PastaLog);
+            return C_WebService.DownloadNFe(downloadNFe, (TCodUfIBGE)Enum.Parse(typeof(TCodUfIBGE), codUF), cert);
         }
 
-        C_WebService.ListaUrl listaURL = default(C_WebService.ListaUrl);
-        listaURL = WsUrls.BuscaURL(Configuracao.CodUF, Configuracao.Ambiente);
-        C_WebService ws = new C_WebService(Configuracao.PastaLog);
-        TConsStatServ consStatus = new TConsStatServ();
-
-        consStatus.tpAmb = Configuracao.Ambiente;
-        consStatus.versao = Configuracao.Versao;
-        consStatus.cUF = Configuracao.CodUF;
-
-        try
+        public List<TRetConsSitNFe> ConsultaSituacao()
         {
-            return ws.ConsultaStatusWs(consStatus, this.Certificado);
+            if (!Directory.Exists(Configuracao.PastaLog))
+            {
+                Directory.CreateDirectory(Configuracao.PastaLog);
+            }
+            var ws = new C_WebService(Configuracao.PastaLog);
+            var retorno = ws.ConsultaSitNFe(this, Certificado);
+            return retorno;
         }
-        catch (Exception)
+
+        public CartaCorrecao.TRetEnvEvento CartaCorrecao(string correcao, int numLote, int nSequencia, out CartaCorrecao.TProcEvento procCorrecao)
         {
-            throw new Exception("Não foi possível consultar o status do servidor da Receita Federal. Favor tentar novamente.");
+            if (NotasFiscais.Count > 1)
+            {
+                throw new InvalidOperationException("Só é possível corrigir uma nota por vez.");
+            }
+            var nota = NotasFiscais[0];
+            correcao = Funcoes.RemoverAcentos(correcao.Trim());
+            var ws = new C_WebService(Configuracao.PastaLog);
+            var retCorrecao = ws.CartaCorrecao(nota, correcao, Certificado, numLote, nSequencia, Configuracao.Ambiente, out procCorrecao);
+            if (retCorrecao.retEvento[0].infEvento.cStat == "135")
+            {
+                SalvarEventoCorrecao(ref procCorrecao, nota.NFe.infNFe.ide.dEmi);
+            }
+            return retCorrecao;
         }
-    }
 
-    public static TRetDownloadNFe DownloadNFe(TDownloadNFe downloadNFe, string CodUF, X509Certificate2 cert)
-    {
-        return C_WebService.DownloadNFe(downloadNFe, (TCodUfIBGE)Enum.Parse(typeof(TCodUfIBGE), CodUF), cert);
-    }
-
-    public List<TRetConsSitNFe> ConsultaSituacao()
-    {
-        if (!Directory.Exists(Configuracao.PastaLog))
+        public Cancelamento.TRetEnvEvento Cancelar(string justificativa, int numLote, int nSequencia, out Cancelamento.TProcEvento procCancelamento)
         {
-            Directory.CreateDirectory(Configuracao.PastaLog);
+            if (NotasFiscais.Count > 1)
+            {
+                throw new InvalidOperationException("Só é possível cancelar uma nota por vez.");
+            }
+            var nota = NotasFiscais[0];
+            var ws = new C_WebService(Configuracao.PastaLog);
+            justificativa = Funcoes.RemoverAcentos(justificativa.Trim());
+            var retCanc = ws.CancelaNFe(nota, justificativa, Certificado, numLote, nSequencia, Configuracao.Ambiente, out procCancelamento);
+            if (retCanc.retEvento[0].infEvento.cStat == "135")
+            {
+                SalvarEventoCancelamento(ref procCancelamento, nota.NFe.infNFe.ide.dEmi);
+            }
+            return retCanc;
         }
 
-        C_WebService ws = new C_WebService(Configuracao.PastaLog);
-        List<TRetConsSitNFe> retorno = new List<TRetConsSitNFe>();
-        retorno = ws.ConsultaSitNFe(this, Certificado);
-        return retorno;
-    }
+        #region Inutilização
 
-    public ACBr.Net.NFe.CartaCorrecao.TRetEnvEvento CartaCorrecao(string Correcao, int numLote, int nSequencia, out ACBr.Net.NFe.CartaCorrecao.TProcEvento procCorrecao)
-    {
-        if (NotasFiscais.Count > 1)
+        public TRetInutNFe Inutilizar(int inicio, int final, int serie, string justificativa)
         {
-            throw new InvalidOperationException("Só é possível corrigir uma nota por vez.");
+            if (Configuracao == null)
+            {
+                return null;
+            }
+
+            if (String.IsNullOrEmpty(Configuracao.CodUF.ToString()))
+            {
+                return null;
+            }
+
+            if (String.IsNullOrEmpty(Configuracao.Versao))
+            {
+                return null;
+            }
+
+            var inutilizacao = new TInutNFe
+            {
+                infInut =
+                {
+                    ano = DateTime.Now.Year.ToString(_ptBr),
+                    CNPJ = Configuracao.Emitente.Item,
+                    mod = TMod.NotaFiscalEletronica,
+                    serie = serie.ToString(_ptBr),
+                    nNFIni = inicio.ToString(_ptBr),
+                    nNFFin = final.ToString(_ptBr)
+                }
+            };
+
+
+            var chave = new StringBuilder();
+            chave.Append(Configuracao.CodUF);
+            chave.Append(inutilizacao.infInut.ano);
+            chave.Append(inutilizacao.infInut.CNPJ);
+            chave.Append(inutilizacao.infInut.mod);
+            chave.Append(string.Format("{0:000}", Convert.ToInt32(inutilizacao.infInut.serie)));
+            chave.Append(string.Format("{0:000000000}", Convert.ToInt32(inutilizacao.infInut.nNFIni)));
+            chave.Append(string.Format("{0:000000000}", Convert.ToInt32(inutilizacao.infInut.nNFFin)));
+
+
+            inutilizacao.infInut.Id = string.Format("ID{0}", chave);
+            inutilizacao.infInut.xServ = TInutNFeInfInutXServ.INUTILIZAR;
+            inutilizacao.infInut.xJust = justificativa;
+
+            return Inutilizar(inutilizacao);
         }
-        TNfeProc nota = NotasFiscais[0];
-        Correcao = Funcoes.RemoverAcentos(Correcao.Trim());
-        C_WebService ws = new C_WebService(Configuracao.PastaLog);
-        ACBr.Net.NFe.CartaCorrecao.TRetEnvEvento retCorrecao = ws.CartaCorrecao(nota, Correcao, Certificado, numLote, nSequencia, Configuracao.Ambiente, out procCorrecao);
-        if (retCorrecao.retEvento[0].infEvento.cStat == "135")
+
+        private TRetInutNFe Inutilizar(TInutNFe inutilizacao)
         {
-            SalvarEventoCorrecao(ref procCorrecao, nota.NFe.infNFe.ide.dEmi);
+            var ws = new C_WebService(Configuracao.PastaLog);
+            return ws.InutilizaNumeracao(inutilizacao, Certificado, Configuracao.Ambiente);
         }
-        return retCorrecao;
-    }
 
-    public ACBr.Net.NFe.Cancelamento.TRetEnvEvento Cancelar(string Justificativa, int numLote, int nSequencia, out ACBr.Net.NFe.Cancelamento.TProcEvento procCancelamento)
-    {
-        if (NotasFiscais.Count > 1)
+        #endregion Inutilização
+
+        #region Geração de Arquivo
+
+        public void GerarArquivoNFe()
         {
-            throw new InvalidOperationException("Só é possível cancelar uma nota por vez.");
+            foreach (var nota in NotasFiscais)
+            {
+                if ((nota.NFe.infNFe.emit == null) && (Configuracao.Emitente != null))
+                {
+                    nota.NFe.infNFe.emit = Configuracao.Emitente;
+                }
+
+                var dtEmissao = Convert.ToDateTime(nota.NFe.infNFe.ide.dEmi);
+                var codUF = nota.NFe.infNFe.ide.cUF.GetHashCode().ToString(_ptBr);
+                var dEmi = dtEmissao.ToString("yyMM");
+                if (nota.NFe.infNFe.emit == null) continue;
+                var cnpj = removeFormatacao(nota.NFe.infNFe.emit.Item);
+                var mod = nota.NFe.infNFe.ide.mod.GetHashCode().ToString(_ptBr);
+                var serie = string.Format("{0:000}", Int32.Parse(nota.NFe.infNFe.ide.serie));
+                var numNf = string.Format("{0:000000000}", Int32.Parse(nota.NFe.infNFe.ide.nNF));
+                var codigo = string.Format("{0:00000000}", Convert.ToInt32(nota.NFe.infNFe.ide.nNF));
+                var tpEmissao = nota.NFe.infNFe.ide.tpEmis.GetHashCode().ToString(_ptBr);
+                var chaveNF = codUF + dEmi + cnpj + mod + serie + numNf + tpEmissao + codigo;
+
+                #region Validations
+
+                if (string.IsNullOrEmpty(dtEmissao.ToString(_ptBr)))
+                {
+                    throw new Exception("Chave inválida, não é possível calcular o digito verificador: Falta Data de Emissão");
+                }
+
+                if (string.IsNullOrEmpty(codUF))
+                {
+                    throw new Exception("Chave inválida, não é possível calcular o digito verificador: Falta CodUF do emissor");
+                }
+
+                if (string.IsNullOrEmpty(dEmi))
+                {
+                    throw new Exception("Chave inválida, não é possível calcular o digito verificador: Falta mes e ano da Data de Emissão");
+                }
+
+                if (string.IsNullOrEmpty(cnpj))
+                {
+                    throw new Exception("Chave inválida, não é possível calcular o digito verificador: Falta o CNPJ do Emissor");
+                }
+
+                if (string.IsNullOrEmpty(mod))
+                {
+                    throw new Exception("Chave inválida, não é possível calcular o digito verificador: Falta o modelo na Nota Fiscal");
+                }
+
+                if (string.IsNullOrEmpty(serie))
+                {
+                    throw new Exception("Chave inválida, não é possível calcular o digito verificador: Falta a série da Nota Fiscal");
+                }
+
+                if (string.IsNullOrEmpty(numNf))
+                {
+                    throw new Exception("Chave inválida, não é possível calcular o digito verificador: Falta o número da Nota Fiscal");
+                }
+
+                if (string.IsNullOrEmpty(codigo))
+                {
+                    throw new Exception("Chave inválida, não é possível calcular o digito verificador: Falta número da Nota Fiscal");
+                }
+
+                #endregion Validations
+
+                var dv = Digit.Modulo11(chaveNF);
+                nota.NFe.infNFe.Id = "NFe" + chaveNF + dv;
+                nota.NFe.infNFe.ide.cDV = dv.ToString(_ptBr);
+                nota.NFe.infNFe.ide.cNF = codigo;
+                var arquivoNFe = Configuracao.PastaLog + chaveNF + dv + "-nfe.xml";
+
+                nota.NFe.ArquivoXML = SaveXml(nota.Serialize(), arquivoNFe);
+                nota.NFe.NomeArquivo = arquivoNFe;
+            }
         }
-        TNfeProc nota = NotasFiscais[0];
-        C_WebService ws = new C_WebService(Configuracao.PastaLog);
-        Justificativa = Funcoes.RemoverAcentos(Justificativa.Trim());
-        ACBr.Net.NFe.Cancelamento.TRetEnvEvento retCanc = ws.CancelaNFe(nota, Justificativa, Certificado, numLote, nSequencia, Configuracao.Ambiente, out procCancelamento);
-        if (retCanc.retEvento[0].infEvento.cStat == "135")
+
+        public void GerarArquivoNFeProc()
         {
-            SalvarEventoCancelamento(ref procCancelamento, nota.NFe.infNFe.ide.dEmi);
+            foreach (var nota in NotasFiscais)
+            {
+                if ((nota.NFe.infNFe.emit == null) && (Configuracao.Emitente != null))
+                {
+                    nota.NFe.infNFe.emit = Configuracao.Emitente;
+                }
+
+                var dtEmissao = Convert.ToDateTime(nota.NFe.infNFe.ide.dEmi);
+                var codUF = nota.NFe.infNFe.ide.cUF.GetHashCode().ToString(_ptBr);
+                var dEmi = dtEmissao.ToString("yyMM");
+                if (nota.NFe.infNFe.emit == null) continue;
+                var cnpj = removeFormatacao(nota.NFe.infNFe.emit.Item);
+                var mod = nota.NFe.infNFe.ide.mod.GetHashCode().ToString(_ptBr);
+                var serie = string.Format("{0:000}", Int32.Parse(nota.NFe.infNFe.ide.serie));
+                var numNF = string.Format("{0:000000000}", Int32.Parse(nota.NFe.infNFe.ide.nNF));
+                var codigo = string.Format("{0:00000000}", Convert.ToInt32(nota.NFe.infNFe.ide.nNF)).Substring(0, 8);
+                var tpEmissao = nota.NFe.infNFe.ide.tpEmis.GetHashCode().ToString(_ptBr);
+                var chaveNF = codUF + dEmi + cnpj + mod + serie + numNF + tpEmissao + codigo;
+
+                #region Validations
+
+                if (String.IsNullOrEmpty(dtEmissao.ToString(_ptBr)))
+                {
+                    throw new Exception("Chave inválida, não é possível calcular o digito verificador: Falta Data de Emissão");
+                }
+
+                if (string.IsNullOrEmpty(codUF))
+                {
+                    throw new Exception("Chave inválida, não é possível calcular o digito verificador: Falta CodUF do emissor");
+                }
+
+                if (string.IsNullOrEmpty(dEmi))
+                {
+                    throw new Exception("Chave inválida, não é possível calcular o digito verificador: Falta mes e ano da Data de Emissão");
+                }
+
+                if (string.IsNullOrEmpty(cnpj))
+                {
+                    throw new Exception("Chave inválida, não é possível calcular o digito verificador: Falta o CNPJ do Emissor");
+                }
+
+                if (string.IsNullOrEmpty(mod))
+                {
+                    throw new Exception("Chave inválida, não é possível calcular o digito verificador: Falta o modelo na Nota Fiscal");
+                }
+
+                if (string.IsNullOrEmpty(serie))
+                {
+                    throw new Exception("Chave inválida, não é possível calcular o digito verificador: Falta a série da Nota Fiscal");
+                }
+
+                if (string.IsNullOrEmpty(numNF))
+                {
+                    throw new Exception("Chave inválida, não é possível calcular o digito verificador: Falta o número da Nota Fiscal");
+                }
+
+                if (string.IsNullOrEmpty(codigo))
+                {
+                    throw new Exception("Chave inválida, não é possível calcular o digito verificador: Falta número da Nota Fiscal");
+                }
+
+                #endregion Validations
+
+                var dv = Digit.Modulo11(chaveNF);
+                nota.protNFe.infProt = new TProtNFeInfProt
+                {
+                    nProt = "Nao autorizado",
+                    cStat = "000",
+                    chNFe = chaveNF + dv
+                };
+                nota.NFe.infNFe.Id = "NFe" + chaveNF + dv;
+                nota.NFe.infNFe.ide.cDV = dv.ToString(_ptBr);
+                nota.NFe.infNFe.ide.cNF = codigo;
+                nota.NFe.infNFe.infAdic.infCpl = Funcoes.RemoverAcentos(nota.NFe.infNFe.infAdic.infCpl);
+                var arquivoNFe = Configuracao.PastaLog + chaveNF + dv + "-nfe.xml";
+
+                nota.NFe.ArquivoXML = SaveXml(nota.Serialize(), arquivoNFe);
+                nota.NFe.NomeArquivo = arquivoNFe;
+            }
         }
-        return retCanc;
-    }
 
-    #region Inutilização
+        #endregion Geração de Arquivo
 
-    public TRetInutNFe Inutilizar(int Inicio, int Final, int Serie, string Justificativa)
-    {
-        if (Configuracao == null)
+        #region Assinatura
+
+        public void Assinar()
         {
-            return null;
+            foreach (var nota in NotasFiscais)
+            {
+                if (Certificado == null)
+                {
+                    throw new Exception("O Certificado Digital não está Configurado.");
+                }
+                nota.NFe = AssinarNFE(nota.NFe, "infNFe");
+            }
         }
 
-        if (String.IsNullOrEmpty(Configuracao.CodUF.ToString()))
-        {
-            return null;
-        }
-
-        if (String.IsNullOrEmpty(Configuracao.Versao))
-        {
-            return null;
-        }
-
-        TInutNFe Inutilizacao = new TInutNFe();
-
-        Inutilizacao.infInut.ano = DateTime.Now.Year.ToString();
-        Inutilizacao.infInut.CNPJ = Configuracao.Emitente.Item;
-        Inutilizacao.infInut.mod = TMod.NotaFiscalEletronica;
-        Inutilizacao.infInut.serie = Serie.ToString();
-        Inutilizacao.infInut.nNFIni = Inicio.ToString();
-        Inutilizacao.infInut.nNFFin = Final.ToString();
-
-
-        string chave = Configuracao.CodUF + Inutilizacao.infInut.ano + Inutilizacao.infInut.CNPJ + Inutilizacao.infInut.mod + string.Format("{0:000}", Convert.ToInt32(Inutilizacao.infInut.serie)) + string.Format("{0:000000000}", Convert.ToInt32(Inutilizacao.infInut.nNFIni)) + string.Format("{0:000000000}", Convert.ToInt32(Inutilizacao.infInut.nNFFin));
-        Inutilizacao.infInut.Id = "ID" + chave;
-        Inutilizacao.infInut.xServ = TInutNFeInfInutXServ.INUTILIZAR;
-        Inutilizacao.infInut.xJust = Justificativa;
-
-        return Inutilizar(Inutilizacao);
-    }
-
-    private TRetInutNFe Inutilizar(TInutNFe Inutilizacao)
-    {
-        C_WebService ws = new C_WebService(Configuracao.PastaLog);
-        return ws.InutilizaNumeracao(Inutilizacao, Certificado, Configuracao.Ambiente);
-    }
-
-    #endregion Inutilização
-
-    #region Geração de Arquivo
-
-    public void GerarArquivoNFe()
-    {
-        foreach (TNfeProc nota in NotasFiscais)
-        {
-            if ((nota.NFe.infNFe.emit == null) && (Configuracao.Emitente != null))
-            {
-                nota.NFe.infNFe.emit = Configuracao.Emitente;
-            }
-
-            System.DateTime dtEmissao = Convert.ToDateTime(nota.NFe.infNFe.ide.dEmi);
-            string _codUF = nota.NFe.infNFe.ide.cUF.GetHashCode().ToString();
-            string _dEmi = dtEmissao.ToString("yyMM");
-            string _cnpj = removeFormatacao(nota.NFe.infNFe.emit.Item);
-            string _mod = nota.NFe.infNFe.ide.mod.GetHashCode().ToString();
-            string _serie = string.Format("{0:000}", Int32.Parse(nota.NFe.infNFe.ide.serie));
-            string _numNF = string.Format("{0:000000000}", Int32.Parse(nota.NFe.infNFe.ide.nNF));
-            string _codigo = string.Format("{0:00000000}", Convert.ToInt32(nota.NFe.infNFe.ide.nNF));
-            string _tpEmissao = nota.NFe.infNFe.ide.tpEmis.GetHashCode().ToString();
-            string chaveNF = _codUF + _dEmi + _cnpj + _mod + _serie + _numNF + _tpEmissao + _codigo;
-
-            #region Validations
-
-            if (String.IsNullOrEmpty(dtEmissao.ToString()))
-            {
-                throw new Exception("Chave inválida, não é possível calcular o digito verificador: Falta Data de Emissão");
-            }
-
-            if (string.IsNullOrEmpty(_codUF))
-            {
-                throw new Exception("Chave inválida, não é possível calcular o digito verificador: Falta CodUF do emissor");
-            }
-
-            if (string.IsNullOrEmpty(_dEmi))
-            {
-                throw new Exception("Chave inválida, não é possível calcular o digito verificador: Falta mes e ano da Data de Emissão");
-            }
-
-            if (string.IsNullOrEmpty(_cnpj))
-            {
-                throw new Exception("Chave inválida, não é possível calcular o digito verificador: Falta o CNPJ do Emissor");
-            }
-
-            if (string.IsNullOrEmpty(_mod))
-            {
-                throw new Exception("Chave inválida, não é possível calcular o digito verificador: Falta o modelo na Nota Fiscal");
-            }
-
-            if (string.IsNullOrEmpty(_serie))
-            {
-                throw new Exception("Chave inválida, não é possível calcular o digito verificador: Falta a série da Nota Fiscal");
-            }
-
-            if (string.IsNullOrEmpty(_numNF))
-            {
-                throw new Exception("Chave inválida, não é possível calcular o digito verificador: Falta o número da Nota Fiscal");
-            }
-
-            if (string.IsNullOrEmpty(_codigo))
-            {
-                throw new Exception("Chave inválida, não é possível calcular o digito verificador: Falta número da Nota Fiscal");
-            }
-
-            #endregion Validations
-
-            int _dv = modulo11(chaveNF);
-            nota.NFe.infNFe.Id = "NFe" + chaveNF + _dv.ToString();
-            nota.NFe.infNFe.ide.cDV = _dv.ToString();
-            nota.NFe.infNFe.ide.cNF = _codigo;
-            string ArquivoNFe = Configuracao.PastaLog + chaveNF + _dv.ToString() + "-nfe.xml";
-
-            nota.NFe.ArquivoXML = saveXml(nota.Serialize(), ArquivoNFe);
-            nota.NFe.NomeArquivo = ArquivoNFe;
-        }
-    }
-    
-    public void GerarArquivoNFeProc()
-    {
-        foreach (TNfeProc nota in NotasFiscais)
-        {
-            if ((nota.NFe.infNFe.emit == null) && (Configuracao.Emitente != null))
-            {
-                nota.NFe.infNFe.emit = Configuracao.Emitente;
-            }
-
-            System.DateTime dtEmissao = Convert.ToDateTime(nota.NFe.infNFe.ide.dEmi);
-            string _codUF = nota.NFe.infNFe.ide.cUF.GetHashCode().ToString();
-            string _dEmi = dtEmissao.ToString("yyMM");
-            string _cnpj = removeFormatacao(nota.NFe.infNFe.emit.Item);
-            string _mod = nota.NFe.infNFe.ide.mod.GetHashCode().ToString();
-            string _serie = string.Format("{0:000}", Int32.Parse(nota.NFe.infNFe.ide.serie));
-            string _numNF = string.Format("{0:000000000}", Int32.Parse(nota.NFe.infNFe.ide.nNF));
-            string _codigo = string.Format("{0:00000000}", Convert.ToInt32(nota.NFe.infNFe.ide.nNF)).Substring(0, 8);
-            string _tpEmissao = nota.NFe.infNFe.ide.tpEmis.GetHashCode().ToString();
-            string chaveNF = _codUF + _dEmi + _cnpj + _mod + _serie + _numNF + _tpEmissao + _codigo;
-
-            #region Validations
-
-            if (String.IsNullOrEmpty(dtEmissao.ToString()))
-            {
-                throw new Exception("Chave inválida, não é possível calcular o digito verificador: Falta Data de Emissão");
-            }
-
-            if (string.IsNullOrEmpty(_codUF))
-            {
-                throw new Exception("Chave inválida, não é possível calcular o digito verificador: Falta CodUF do emissor");
-            }
-
-            if (string.IsNullOrEmpty(_dEmi))
-            {
-                throw new Exception("Chave inválida, não é possível calcular o digito verificador: Falta mes e ano da Data de Emissão");
-            }
-
-            if (string.IsNullOrEmpty(_cnpj))
-            {
-                throw new Exception("Chave inválida, não é possível calcular o digito verificador: Falta o CNPJ do Emissor");
-            }
-
-            if (string.IsNullOrEmpty(_mod))
-            {
-                throw new Exception("Chave inválida, não é possível calcular o digito verificador: Falta o modelo na Nota Fiscal");
-            }
-
-            if (string.IsNullOrEmpty(_serie))
-            {
-                throw new Exception("Chave inválida, não é possível calcular o digito verificador: Falta a série da Nota Fiscal");
-            }
-
-            if (string.IsNullOrEmpty(_numNF))
-            {
-                throw new Exception("Chave inválida, não é possível calcular o digito verificador: Falta o número da Nota Fiscal");
-            }
-
-            if (string.IsNullOrEmpty(_codigo))
-            {
-                throw new Exception("Chave inválida, não é possível calcular o digito verificador: Falta número da Nota Fiscal");
-            }
-
-            #endregion Validations
-
-            int _dv = modulo11(chaveNF);
-            nota.protNFe.infProt = new TProtNFeInfProt();
-            nota.protNFe.infProt.nProt = "Nao autorizado";
-            nota.protNFe.infProt.cStat = "000";
-            nota.protNFe.infProt.chNFe = chaveNF + _dv.ToString();
-            nota.NFe.infNFe.Id = "NFe" + chaveNF + _dv.ToString();
-            nota.NFe.infNFe.ide.cDV = _dv.ToString();
-            nota.NFe.infNFe.ide.cNF = _codigo;
-            nota.NFe.infNFe.infAdic.infCpl = Funcoes.RemoverAcentos(nota.NFe.infNFe.infAdic.infCpl);
-            string ArquivoNFe = Configuracao.PastaLog + chaveNF + _dv.ToString() + "-nfe.xml";
-
-            nota.NFe.ArquivoXML = saveXml(nota.Serialize(), ArquivoNFe); ;
-            nota.NFe.NomeArquivo = ArquivoNFe;
-        }
-    }
-
-    #endregion Geração de Arquivo
-
-    #region Assinatura
-
-    public void Assinar()
-    {
-        foreach (TNfeProc nota in NotasFiscais)
+        public void Assinar(ref TNfeProc nota)
         {
             if (Certificado == null)
             {
@@ -413,973 +422,453 @@ public class HiperNFe
             }
             nota.NFe = AssinarNFE(nota.NFe, "infNFe");
         }
-    }
 
-    public void Assinar(ref TNfeProc nota)
-    {
-        if (Certificado == null)
+        public TNFe AssinarNFE(TNFe nota, string pUri)
         {
-            throw new Exception("O Certificado Digital não está Configurado.");
-        }
-        nota.NFe = AssinarNFE(nota.NFe, "infNFe");
-    }
+            var arquivoNaoAssinado = new XmlDocument();
+            arquivoNaoAssinado.LoadXml(Funcoes.RemoveNameSpaceFromXml(nota.Serialize()));
 
-    public TNFe AssinarNFE(TNFe nota, string pUri)
-    {
-        XmlDocument arquivoNaoAssinado = new XmlDocument();
-        arquivoNaoAssinado.LoadXml(Funcoes.RemoveNameSpaceFromXml(nota.Serialize()));
+            var auxDocXML = CertificadoDigital.Assinar(arquivoNaoAssinado, pUri, Certificado);
+            auxDocXML.Save(nota.NomeArquivo);
 
-        XmlDocument auxDocXML = CertificadoDigital.Assinar(arquivoNaoAssinado, pUri, Certificado);
-        auxDocXML.Save(nota.NomeArquivo);
-
-        TNFe retorno = TNFe.LoadFromFile(nota.NomeArquivo);
-        retorno.NomeArquivo = nota.NomeArquivo;
-        retorno.ArquivoXML = auxDocXML;
-        return retorno;
-    }
-
-    #endregion Assinatura
-
-    #region Email
-
-    public List<String> EnviarEmail()
-    {
-        if (String.IsNullOrWhiteSpace(Configuracao.MensagemEmail))
-        {
-            throw new Exception("Erro ao enviar o email. Motivo: Corpo de email não configurado");
+            var retorno = TNFe.LoadFromFile(nota.NomeArquivo);
+            retorno.NomeArquivo = nota.NomeArquivo;
+            retorno.ArquivoXML = auxDocXML;
+            return retorno;
         }
 
-        List<string> lstMsgErroEmail = new List<string>();
+        #endregion Assinatura
 
-        foreach (TNfeProc nota in NotasFiscais)
+        #region Email
+
+        public List<String> EnviarEmail()
         {
-            if (!String.IsNullOrEmpty(nota.Email))
+            if (String.IsNullOrWhiteSpace(Configuracao.MensagemEmail))
             {
-                try
+                throw new Exception("Erro ao enviar o email. Motivo: Corpo de email não configurado");
+            }
+
+            var lstMsgErroEmail = new List<string>();
+
+            foreach (var nota in NotasFiscais)
+            {
+                if (!String.IsNullOrEmpty(nota.Email))
                 {
-                    enviaMensagemEmail(nota, nota.Email, "", "", Configuracao.AssuntoEmail, String.Format(Configuracao.MensagemEmail, nota.NFe.infNFe.ide.nNF));
+                    try
+                    {
+                        EnviaMensagemEmail(nota, nota.Email, "", "", Configuracao.AssuntoEmail, String.Format(Configuracao.MensagemEmail, nota.NFe.infNFe.ide.nNF));
+                    }
+                    catch (Exception ex)
+                    {
+                        lstMsgErroEmail.Add("Nota [" + nota.NFe.infNFe.ide.nNF + "] e Destinatário [" + nota.Email + "]: " + ex.Message);
+                    }
                 }
-                catch (Exception ex)
+                else
                 {
-                    lstMsgErroEmail.Add("Nota [" + nota.NFe.infNFe.ide.nNF + "] e Destinatário [" + nota.Email + "]: " + ex.Message);
+                    lstMsgErroEmail.Add("Nota [" + nota.NFe.infNFe.ide.nNF + "] e Destinatário [" + nota.Email + "]: Sem destinatário.");
                 }
             }
-            else
+
+            return lstMsgErroEmail;
+        }
+
+        public List<String> EnviarEmail(string destinatario)
+        {
+            if (String.IsNullOrWhiteSpace(Configuracao.MensagemEmail))
             {
-                lstMsgErroEmail.Add("Nota [" + nota.NFe.infNFe.ide.nNF + "] e Destinatário [" + nota.Email + "]: Sem destinatário.");
+                throw new Exception("Erro ao enviar o email. Motivo: Corpo de email não configurado");
             }
-        }
 
-        return lstMsgErroEmail;
-    }
+            var lstMsgErroEmail = new List<string>();
 
-    public List<String> EnviarEmail(string Destinatario)
-    {
-        if (String.IsNullOrWhiteSpace(Configuracao.MensagemEmail))
-        {
-            throw new Exception("Erro ao enviar o email. Motivo: Corpo de email não configurado");
-        }
-
-        List<string> lstMsgErroEmail = new List<string>();
-
-        foreach (TNfeProc nota in NotasFiscais)
-        {
-            if (!String.IsNullOrEmpty(Destinatario))
+            foreach (var nota in NotasFiscais)
             {
-                try
+                if (!String.IsNullOrEmpty(destinatario))
                 {
-                    enviaMensagemEmail(nota, Destinatario, "", "", Configuracao.AssuntoEmail, String.Format(Configuracao.MensagemEmail, nota.NFe.infNFe.ide.nNF));
+                    try
+                    {
+                        EnviaMensagemEmail(nota, destinatario, "", "", Configuracao.AssuntoEmail, String.Format(Configuracao.MensagemEmail, nota.NFe.infNFe.ide.nNF));
+                    }
+                    catch (Exception ex)
+                    {
+                        lstMsgErroEmail.Add("Nota [" + nota.NFe.infNFe.ide.nNF + "] e Destinatário [" + destinatario + "]: " + ex.Message);
+                    }
                 }
-                catch (Exception ex)
+                else
                 {
-                    lstMsgErroEmail.Add("Nota [" + nota.NFe.infNFe.ide.nNF + "] e Destinatário [" + Destinatario + "]: " + ex.Message);
+                    lstMsgErroEmail.Add("Nota [" + nota.NFe.infNFe.ide.nNF + "] e Destinatário [" + destinatario + "]: Sem destinatário.");
                 }
             }
-            else
+
+            return lstMsgErroEmail;
+        }
+
+        private void EnviaMensagemEmail(TNfeProc nota, string destinatario, string bcc, string cc, string assunto, string corpo)
+        {
+            if (string.IsNullOrEmpty(Configuracao.ConfiguracaoMail.SMTPServer))
             {
-                lstMsgErroEmail.Add("Nota [" + nota.NFe.infNFe.ide.nNF + "] e Destinatário [" + Destinatario + "]: Sem destinatário.");
+                throw new Exception("É necessário preencher a propriedade ConfiguracaoEmail para enviar email");
+                //return;
             }
-        }
 
-        return lstMsgErroEmail;
-    }
+            var mMailMessage = new MailMessage { From = new MailAddress(Configuracao.ConfiguracaoMail.Remetente) };
 
-    private void enviaMensagemEmail(TNfeProc Nota, string Destinatario, string bcc, string cc, string Assunto, string Corpo)
-    {
-        if (string.IsNullOrEmpty(Configuracao.ConfiguracaoMail.SMTPServer))
-        {
-            throw new Exception("É necessário preencher a propriedade ConfiguracaoEmail para enviar email");
-            //return;
-        }
+            var arrDestinatarios = destinatario.Split(';');
 
-        MailMessage mMailMessage = new MailMessage();
-        mMailMessage.From = new MailAddress(Configuracao.ConfiguracaoMail.Remetente);
-
-        string[] arrDestinatarios = Destinatario.Split(';');
-
-        foreach (var email in arrDestinatarios)
-        {
-            if (!String.IsNullOrEmpty(email))
+            foreach (var email in arrDestinatarios.Where(email => !String.IsNullOrEmpty(email)))
             {
                 mMailMessage.To.Add(new MailAddress(email.Trim()));
             }
+
+            if ((bcc != null) & bcc != string.Empty)
+            {
+                mMailMessage.Bcc.Add(new MailAddress(bcc));
+            }
+
+            if ((cc != null) & cc != string.Empty)
+            {
+                mMailMessage.CC.Add(new MailAddress(cc));
+            }
+
+            mMailMessage.Subject = assunto;
+            mMailMessage.Body = corpo;
+            mMailMessage.IsBodyHtml = Configuracao.ConfiguracaoMail.CorpoHtml;
+            mMailMessage.Priority = MailPriority.Normal;
+
+            var servidorSMTP = Configuracao.ConfiguracaoMail.SMTPServer;
+            var mSmtpClient = new SmtpClient(servidorSMTP)
+            {
+                Port = Configuracao.ConfiguracaoMail.Port,
+                EnableSsl = Configuracao.ConfiguracaoMail.HabilitaSSL
+            };
+
+            //Configurar a conta de envio
+            var usuario = Configuracao.ConfiguracaoMail.Usuario;
+            var senha = Configuracao.ConfiguracaoMail.Senha;
+            mSmtpClient.Credentials = new System.Net.NetworkCredential(usuario, senha);
+            //mSmtpClient.UseDefaultCredentials = True
+            mMailMessage.DeliveryNotificationOptions = DeliveryNotificationOptions.OnSuccess;
+
+            //Anexa o XML
+            var anexo = new Attachment(nota.NFe.NomeArquivo);
+            mMailMessage.Attachments.Add(anexo);
+
+            //Anexa o PDF
+            var arquivoPDF = NfeConvert.ToPDF(nota, Configuracao);
+            var anexoPDF = new Attachment(arquivoPDF);
+            mMailMessage.Attachments.Add(anexoPDF);
+
+            //Enviar email
+            try
+            {
+                mSmtpClient.Send(mMailMessage);
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception("Erro ao enviar o email da nota: " + nota.NFe.infNFe.ide.nNF + " para: " + destinatario + ". Motivo: " + ex.Message);
+            }
+
+            //File.Delete(arquivoPDF);
         }
 
-        if ((bcc != null) & bcc != string.Empty)
+        public void EnviarEmailCartaCorrecao(string destinatario, CartaCorrecao.TProcEvento evento)
         {
-            mMailMessage.Bcc.Add(new MailAddress(bcc));
+            if (String.IsNullOrWhiteSpace(Configuracao.MensagemEmail))
+            {
+                throw new Exception("Erro ao enviar o email. Motivo: Corpo de email não configurado");
+            }
+
+            foreach (var nota in NotasFiscais)
+            {
+                EnviaMensagemEmailCartaCorrecao(nota, evento, destinatario, "", "", Configuracao.AssuntoEmail, String.Format(Configuracao.MensagemEmail, nota.NFe.infNFe.ide.nNF));
+            }
         }
 
-        if ((cc != null) & cc != string.Empty)
+        private void EnviaMensagemEmailCartaCorrecao(TNfeProc nota, CartaCorrecao.TProcEvento evento, string destinatario, string bcc, string cc, string assunto, string corpo)
         {
-            mMailMessage.CC.Add(new MailAddress(cc));
-        }
+            if (string.IsNullOrEmpty(Configuracao.ConfiguracaoMail.SMTPServer))
+            {
+                throw new Exception("É necessário preencher a propriedade ConfiguracaoEmail para enviar email");
+                //return;
+            }
 
-        mMailMessage.Subject = Assunto;
-        mMailMessage.Body = Corpo;
-        mMailMessage.IsBodyHtml = Configuracao.ConfiguracaoMail.CorpoHtml;
-        mMailMessage.Priority = MailPriority.Normal;
+            var mMailMessage = new MailMessage { From = new MailAddress(Configuracao.ConfiguracaoMail.Remetente) };
 
-        string servidorSMTP = Configuracao.ConfiguracaoMail.SMTPServer;
-        SmtpClient mSmtpClient = new SmtpClient(servidorSMTP);
+            var arrDestinatarios = destinatario.Split(';');
 
-        //Configurar a conta de envio
-        mSmtpClient.Port = Configuracao.ConfiguracaoMail.Port;
-        mSmtpClient.EnableSsl = Configuracao.ConfiguracaoMail.HabilitaSSL;
-        string Usuario = Configuracao.ConfiguracaoMail.Usuario;
-        string Senha = Configuracao.ConfiguracaoMail.Senha;
-        mSmtpClient.Credentials = new System.Net.NetworkCredential(Usuario, Senha);
-        //mSmtpClient.UseDefaultCredentials = True
-        mMailMessage.DeliveryNotificationOptions = DeliveryNotificationOptions.OnSuccess;
-
-        //Anexa o XML
-        Attachment anexo = new Attachment(Nota.NFe.NomeArquivo);
-        mMailMessage.Attachments.Add(anexo);
-
-        //Anexa o PDF
-        string arquivoPDF = GeraPDF(Nota);
-        Attachment anexoPDF = new Attachment(arquivoPDF);
-        mMailMessage.Attachments.Add(anexoPDF);
-
-        //Enviar email
-        try
-        {
-            mSmtpClient.Send(mMailMessage);
-        }
-        catch (Exception Ex)
-        {
-
-            throw new Exception("Erro ao enviar o email da nota: " + Nota.NFe.infNFe.ide.nNF + " para: " + Destinatario + ". Motivo: " + Ex.Message);
-        }
-
-        //File.Delete(arquivoPDF);
-    }
-
-    public void EnviarEmailCartaCorrecao(string Destinatario, ACBr.Net.NFe.CartaCorrecao.TProcEvento evento)
-    {
-        if (String.IsNullOrWhiteSpace(Configuracao.MensagemEmail))
-        {
-            throw new Exception("Erro ao enviar o email. Motivo: Corpo de email não configurado");
-        }
-
-        foreach (TNfeProc nota in NotasFiscais)
-        {
-            enviaMensagemEmailCartaCorrecao(nota, evento, Destinatario, "", "", Configuracao.AssuntoEmail, String.Format(Configuracao.MensagemEmail, nota.NFe.infNFe.ide.nNF));
-        }
-    }
-
-    private void enviaMensagemEmailCartaCorrecao(TNfeProc Nota, ACBr.Net.NFe.CartaCorrecao.TProcEvento Evento, string Destinatario, string bcc, string cc, string Assunto, string Corpo)
-    {
-        if (string.IsNullOrEmpty(Configuracao.ConfiguracaoMail.SMTPServer))
-        {
-            throw new Exception("É necessário preencher a propriedade ConfiguracaoEmail para enviar email");
-            //return;
-        }
-
-        MailMessage mMailMessage = new MailMessage();
-        mMailMessage.From = new MailAddress(Configuracao.ConfiguracaoMail.Remetente);
-
-        string[] arrDestinatarios = Destinatario.Split(';');
-
-        foreach (var email in arrDestinatarios)
-        {
-            if (!String.IsNullOrEmpty(email))
+            foreach (var email in arrDestinatarios.Where(email => !String.IsNullOrEmpty(email)))
             {
                 mMailMessage.To.Add(new MailAddress(email.Trim()));
             }
-        }
 
-        if ((bcc != null) & bcc != string.Empty)
-        {
-            mMailMessage.Bcc.Add(new MailAddress(bcc));
-        }
-
-        if ((cc != null) & cc != string.Empty)
-        {
-            mMailMessage.CC.Add(new MailAddress(cc));
-        }
-
-        mMailMessage.Subject = Assunto;
-        mMailMessage.Body = Corpo;
-        mMailMessage.IsBodyHtml = Configuracao.ConfiguracaoMail.CorpoHtml;
-        mMailMessage.Priority = MailPriority.Normal;
-
-        string servidorSMTP = Configuracao.ConfiguracaoMail.SMTPServer;
-        SmtpClient mSmtpClient = new SmtpClient(servidorSMTP);
-
-        //Configurar a conta de envio
-        mSmtpClient.Port = Configuracao.ConfiguracaoMail.Port;
-        mSmtpClient.EnableSsl = Configuracao.ConfiguracaoMail.HabilitaSSL;
-        string Usuario = Configuracao.ConfiguracaoMail.Usuario;
-        string Senha = Configuracao.ConfiguracaoMail.Senha;
-        mSmtpClient.Credentials = new System.Net.NetworkCredential(Usuario, Senha);
-        //mSmtpClient.UseDefaultCredentials = True
-        mMailMessage.DeliveryNotificationOptions = DeliveryNotificationOptions.OnSuccess;
-
-        //Anexa o XML
-        Attachment anexo = new Attachment(Evento.NomeArquivo);
-        mMailMessage.Attachments.Add(anexo);
-
-        //Anexa o PDF
-        string arquivoPDF = GeraPDFCartaCorrecao(Nota, Evento);
-        Attachment anexoPDF = new Attachment(arquivoPDF);
-        mMailMessage.Attachments.Add(anexoPDF);
-
-        //Enviar email
-        try
-        {
-            mSmtpClient.Send(mMailMessage);
-        }
-        catch (Exception Ex)
-        {
-            throw new Exception("Erro ao enviar o email do evento: " + Evento.retEvento.infEvento.chNFe + " para: " + Destinatario + ". Motivo: " + Ex.Message);
-        }
-
-        //File.Delete(arquivoPDF);
-    }
-
-    #endregion Email
-
-    #region Validação
-
-    public List<string> Validar()
-    {
-        List<string> ResultValidacao = new List<string>();
-        foreach (TNfeProc nota in NotasFiscais)
-        {
-            string retorno = null;
-            string AbsolutePath = (new System.Uri(Assembly.GetExecutingAssembly().CodeBase)).AbsolutePath;
-            string SchemasPath = Path.GetDirectoryName(AbsolutePath) + "\\Schemas\\nfe_v2.00.xsd";
-            retorno = ValidarXML(nota.NFe.NomeArquivo, SchemasPath);
-            if (!string.IsNullOrEmpty(retorno))
+            if ((bcc != null) & bcc != string.Empty)
             {
-                ResultValidacao.Add("Nota Fiscal: " + nota.NFe.infNFe.ide.nNF + " - " + retorno);
+                mMailMessage.Bcc.Add(new MailAddress(bcc));
             }
-        }
-        return ResultValidacao;
-    }
 
-    public static string ValidarXML(string ArquivoXML, string SchemaNf)
-    {
-        XmlReaderSettings settings = new XmlReaderSettings();
-        settings.ValidationEventHandler += new ValidationEventHandler(ValidationEventHandler);
-
-        if (!File.Exists(ArquivoXML))
-        {
-            return "Arquivo da nota fiscal não encontrado.";
-        }
-
-        if (!File.Exists(SchemaNf))
-        {
-            return "Arquivo de Schema não encontrado.";
-        }
-
-        try
-        {
-            settings.ValidationType = ValidationType.Schema;
-            settings.Schemas.Add("http://www.portalfiscal.inf.br/nfe", XmlReader.Create(SchemaNf));
-            using (XmlReader XmlValidatingReader = XmlReader.Create(ArquivoXML, settings))
+            if ((cc != null) & cc != string.Empty)
             {
-                while (XmlValidatingReader.Read())
+                mMailMessage.CC.Add(new MailAddress(cc));
+            }
+
+            mMailMessage.Subject = assunto;
+            mMailMessage.Body = corpo;
+            mMailMessage.IsBodyHtml = Configuracao.ConfiguracaoMail.CorpoHtml;
+            mMailMessage.Priority = MailPriority.Normal;
+
+            var servidorSMTP = Configuracao.ConfiguracaoMail.SMTPServer;
+            var mSmtpClient = new SmtpClient(servidorSMTP)
+            {
+                Port = Configuracao.ConfiguracaoMail.Port,
+                EnableSsl = Configuracao.ConfiguracaoMail.HabilitaSSL
+            };
+
+            //Configurar a conta de envio
+            var usuario = Configuracao.ConfiguracaoMail.Usuario;
+            var senha = Configuracao.ConfiguracaoMail.Senha;
+            mSmtpClient.Credentials = new System.Net.NetworkCredential(usuario, senha);
+            //mSmtpClient.UseDefaultCredentials = True
+            mMailMessage.DeliveryNotificationOptions = DeliveryNotificationOptions.OnSuccess;
+
+            //Anexa o XML
+            var anexo = new Attachment(evento.NomeArquivo);
+            mMailMessage.Attachments.Add(anexo);
+
+            //Anexa o PDF
+            var arquivoPDF = NfeConvert.ToPDFCartaCorrecao(nota, evento, Configuracao);
+            var anexoPDF = new Attachment(arquivoPDF);
+            mMailMessage.Attachments.Add(anexoPDF);
+
+            //Enviar email
+            try
+            {
+                mSmtpClient.Send(mMailMessage);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Erro ao enviar o email do evento: " + evento.retEvento.infEvento.chNFe + " para: " + destinatario + ". Motivo: " + ex.Message);
+            }
+
+            //File.Delete(arquivoPDF);
+        }
+
+        #endregion Email
+
+        #region Validação
+
+        public List<string> Validar()
+        {
+            return (from nota in NotasFiscais
+                    let absolutePath = (new Uri(Assembly.GetExecutingAssembly().CodeBase)).AbsolutePath
+                    let schemasPath = Path.GetDirectoryName(absolutePath) + "\\Schemas\\nfe_v2.00.xsd"
+                    let retorno = ValidarXML(nota.NFe.NomeArquivo, schemasPath)
+                    where !string.IsNullOrEmpty(retorno)
+                    select "Nota Fiscal: " + nota.NFe.infNFe.ide.nNF + " - " + retorno).ToList();
+        }
+
+        public static string ValidarXML(string arquivoXML, string schemaNf)
+        {
+            var settings = new XmlReaderSettings();
+            settings.ValidationEventHandler += ValidationEventHandler;
+
+            if (!File.Exists(arquivoXML))
+            {
+                return "Arquivo da nota fiscal não encontrado.";
+            }
+
+            if (!File.Exists(schemaNf))
+            {
+                return "Arquivo de Schema não encontrado.";
+            }
+
+            try
+            {
+                settings.ValidationType = ValidationType.Schema;
+                settings.Schemas.Add("http://www.portalfiscal.inf.br/nfe", XmlReader.Create(schemaNf));
+                using (var xmlValidatingReader = XmlReader.Create(arquivoXML, settings))
                 {
+                    while (xmlValidatingReader.Read())
+                    {
+                    }
                 }
             }
-        }
-        catch (Exception ex)
-        {
-            return ex.Message;
+            catch (Exception ex)
+            {
+                return ex.Message;
 
-        }
+            }
 
-        if (Erros != null)
-        {
-            string retorno = String.Join(String.Empty, Erros);
+            if (Erros == null) return string.Empty;
+            var retorno = String.Join(String.Empty, Erros);
             Erros = null;
             return retorno;
         }
 
-        return string.Empty;
-    }
-
-    public static void ValidationEventHandler(object sender, ValidationEventArgs args)
-    {
-        Erros = new List<string>();
-        if (args.Severity == XmlSeverityType.Warning)
+        public static void ValidationEventHandler(object sender, ValidationEventArgs args)
         {
-            Erros.Add("Nenhum arquivo de Schema foi encontrado para efetuar a validação...");
-        }
-        else if (args.Severity == XmlSeverityType.Error)
-        {
-            Erros.Add("Ocorreu um erro durante a validação....");
-        }
-        // Erro na validação do schema XSD
-        if ((args.Exception != null))
-        {
-            Erros.Add("\nErro: " + args.Exception.Message + "\nLinha " + args.Exception.LinePosition + " - Coluna "
-                               + args.Exception.LineNumber + "\nSource: " + args.Exception.SourceUri);
-        }
-    }
-
-    #endregion Validação
-
-    #region Impressão
-
-    public ReportDocument ImprimirDANFE(TNfeProc nota)
-    {
-        XDocument doc = XDocument.Load(nota.NFe.NomeArquivo);
-
-        #region Validations
-
-        string ns = "{http://www.portalfiscal.inf.br/nfe}";
-        foreach (XElement det in doc.Descendants(ns + "det"))
-        {
-            XElement imposto = det.Element(ns + "imposto");
-            XElement ICMS = imposto.Element(ns + "ICMS");
-
-            if (ICMS.Element(ns + "ICMS00") == null)
+            Erros = new List<string>();
+            if (args.Severity == XmlSeverityType.Warning)
             {
-                XElement ICMS00 = new XElement(ns + "ICMS00");
-                ICMS00.Add(new XElement(ns + "orig", ""));
-                ICMS00.Add(new XElement(ns + "CST", ""));
-                ICMS00.Add(new XElement(ns + "vBC", ""));
-                ICMS00.Add(new XElement(ns + "vICMS", ""));
-                ICMS00.Add(new XElement(ns + "pICMS", ""));
-
-                ICMS.Add(ICMS00);
+                Erros.Add("Nenhum arquivo de Schema foi encontrado para efetuar a validação...");
             }
-
-            if (ICMS.Element(ns + "ICMS10") == null)
+            else if (args.Severity == XmlSeverityType.Error)
             {
-                XElement ICMS10 = new XElement(ns + "ICMS10");
-                ICMS10.Add(new XElement(ns + "orig", ""));
-                ICMS10.Add(new XElement(ns + "CST", ""));
-                ICMS10.Add(new XElement(ns + "vBC", ""));
-                ICMS10.Add(new XElement(ns + "vICMS", ""));
-                ICMS10.Add(new XElement(ns + "pICMS", ""));
-
-                ICMS.Add(ICMS10);
+                Erros.Add("Ocorreu um erro durante a validação....");
             }
-
-            if (ICMS.Element(ns + "ICMS20") == null)
+            // Erro na validação do schema XSD
+            if ((args.Exception != null))
             {
-                XElement ICMS20 = new XElement(ns + "ICMS20");
-                ICMS20.Add(new XElement(ns + "orig", ""));
-                ICMS20.Add(new XElement(ns + "CST", ""));
-                ICMS20.Add(new XElement(ns + "vBC", ""));
-                ICMS20.Add(new XElement(ns + "vICMS", ""));
-                ICMS20.Add(new XElement(ns + "pICMS", ""));
-
-                ICMS.Add(ICMS20);
-            }
-
-            if (ICMS.Element(ns + "ICMS30") == null)
-            {
-                XElement ICMS30 = new XElement(ns + "ICMS30");
-                ICMS30.Add(new XElement(ns + "orig", ""));
-                ICMS30.Add(new XElement(ns + "CST", ""));
-
-                ICMS.Add(ICMS30);
-            }
-
-            if (ICMS.Element(ns + "ICMS40") == null)
-            {
-                XElement ICMS40 = new XElement(ns + "ICMS40");
-                ICMS40.Add(new XElement(ns + "orig", ""));
-                ICMS40.Add(new XElement(ns + "CST", ""));
-
-                ICMS.Add(ICMS40);
-            }
-
-            if (ICMS.Element(ns + "ICMS51") == null)
-            {
-                XElement ICMS51 = new XElement(ns + "ICMS51");
-                ICMS51.Add(new XElement(ns + "orig", ""));
-                ICMS51.Add(new XElement(ns + "CST", ""));
-                ICMS51.Add(new XElement(ns + "vBC", ""));
-                ICMS51.Add(new XElement(ns + "vICMS", ""));
-                ICMS51.Add(new XElement(ns + "pICMS", ""));
-
-                ICMS.Add(ICMS51);
-            }
-
-            if (ICMS.Element(ns + "ICMS60") == null)
-            {
-                XElement ICMS60 = new XElement(ns + "ICMS60");
-                ICMS60.Add(new XElement(ns + "orig", ""));
-                ICMS60.Add(new XElement(ns + "CST", ""));
-
-                ICMS.Add(ICMS60);
-            }
-
-            if (ICMS.Element(ns + "ICMS70") == null)
-            {
-                XElement ICMS70 = new XElement(ns + "ICMS70");
-                ICMS70.Add(new XElement(ns + "orig", ""));
-                ICMS70.Add(new XElement(ns + "CST", ""));
-                ICMS70.Add(new XElement(ns + "vBC", ""));
-                ICMS70.Add(new XElement(ns + "vICMS", ""));
-                ICMS70.Add(new XElement(ns + "pICMS", ""));
-
-                ICMS.Add(ICMS70);
-            }
-
-            if (ICMS.Element(ns + "ICMS90") == null)
-            {
-                XElement ICMS90 = new XElement(ns + "ICMS90");
-                ICMS90.Add(new XElement(ns + "orig", ""));
-                ICMS90.Add(new XElement(ns + "CST", ""));
-                ICMS90.Add(new XElement(ns + "vBC", ""));
-                ICMS90.Add(new XElement(ns + "vICMS", ""));
-                ICMS90.Add(new XElement(ns + "pICMS", ""));
-
-                ICMS.Add(ICMS90);
-            }
-
-            if (ICMS.Element(ns + "ICMSPart") == null)
-            {
-                XElement ICMSPart = new XElement(ns + "ICMSPart");
-                ICMSPart.Add(new XElement(ns + "orig", ""));
-                ICMSPart.Add(new XElement(ns + "CST", ""));
-                ICMSPart.Add(new XElement(ns + "vBC", ""));
-                ICMSPart.Add(new XElement(ns + "vICMS", ""));
-                ICMSPart.Add(new XElement(ns + "pICMS", ""));
-
-                ICMS.Add(ICMSPart);
-            }
-
-            if (ICMS.Element(ns + "ICMSSN101") == null)
-            {
-                XElement ICMSSN101 = new XElement(ns + "ICMSSN101");
-                ICMSSN101.Add(new XElement(ns + "orig", ""));
-                ICMSSN101.Add(new XElement(ns + "CSOSN", ""));
-
-                ICMS.Add(ICMSSN101);
-            }
-
-            if (ICMS.Element(ns + "ICMSSN102") == null)
-            {
-                XElement ICMSSN102 = new XElement(ns + "ICMSSN102");
-                ICMSSN102.Add(new XElement(ns + "orig", ""));
-                ICMSSN102.Add(new XElement(ns + "CSOSN", ""));
-
-                ICMS.Add(ICMSSN102);
-            }
-
-            if (ICMS.Element(ns + "ICMSSN201") == null)
-            {
-                XElement ICMSSN201 = new XElement(ns + "ICMSSN201");
-                ICMSSN201.Add(new XElement(ns + "orig", ""));
-                ICMSSN201.Add(new XElement(ns + "CSOSN", ""));
-
-                ICMS.Add(ICMSSN201);
-            }
-
-            if (ICMS.Element(ns + "ICMSSN202") == null)
-            {
-                XElement ICMSSN202 = new XElement(ns + "ICMSSN202");
-                ICMSSN202.Add(new XElement(ns + "orig", ""));
-                ICMSSN202.Add(new XElement(ns + "CSOSN", ""));
-
-                ICMS.Add(ICMSSN202);
-            }
-
-            if (ICMS.Element(ns + "ICMSSN500") == null)
-            {
-                XElement ICMSSN500 = new XElement(ns + "ICMSSN500");
-                ICMSSN500.Add(new XElement(ns + "orig", ""));
-                ICMSSN500.Add(new XElement(ns + "CSOSN", ""));
-
-                ICMS.Add(ICMSSN500);
-            }
-
-            if (ICMS.Element(ns + "ICMSSN900") == null)
-            {
-                XElement ICMSSN900 = new XElement(ns + "ICMSSN900");
-                ICMSSN900.Add(new XElement(ns + "orig", ""));
-                ICMSSN900.Add(new XElement(ns + "CSOSN", ""));
-                ICMSSN900.Add(new XElement(ns + "vBC", ""));
-                ICMSSN900.Add(new XElement(ns + "vICMS", ""));
-                ICMSSN900.Add(new XElement(ns + "pICMS", ""));
-
-                ICMS.Add(ICMSSN900);
-            }
-
-            if (ICMS.Element(ns + "ICMSST") == null)
-            {
-                XElement ICMSST = new XElement(ns + "ICMSST");
-                ICMSST.Add(new XElement(ns + "orig", ""));
-                ICMSST.Add(new XElement(ns + "CST", ""));
-
-                ICMS.Add(ICMSST);
-            }
-
-            if (ICMS.Element(ns + "ISSQN") == null)
-            {
-                XElement ISSQN = new XElement(ns + "ISSQN");
-                ISSQN.Add(new XElement(ns + "ISSQN", ""));
-
-                ICMS.Add(ISSQN);
-            }
-
-            XElement IPI = imposto.Element(ns + "IPI");
-            if (IPI == null)
-            {
-                IPI = new XElement(ns + "IPI");
-                imposto.Add(IPI);
-            }
-            if (IPI.Element(ns + "IPITrib") == null)
-            {
-                XElement IPITrib = new XElement(ns + "IPITrib");
-                IPITrib.Add(new XElement(ns + "pIPI", "0.00"));
-                IPITrib.Add(new XElement(ns + "vIPI", "0.00"));
-                IPI.Add(IPITrib);
-            }
-
-            if (det.Element(ns + "infAdProd") == null)
-            {
-                det.Add(new XElement(ns + "infAdProd", ""));
-            }
-
-            if (det.Element(ns + "prod").Element(ns + "vDesc") == null)
-            {
-                det.Element(ns + "prod").Add(new XElement(ns + "vDesc", "0.00"));
+                Erros.Add("\nErro: " + args.Exception.Message + "\nLinha " + args.Exception.LinePosition + " - Coluna "
+                          + args.Exception.LineNumber + "\nSource: " + args.Exception.SourceUri);
             }
         }
 
-        #endregion Validations
+        #endregion Validação
 
-        DataSet dataSet = new DataSet();
-        dataSet.ReadXml(doc.CreateReader());
 
-        #region Validations
+        #region Auxiliares
 
-        if (dataSet.Tables["ide"].Columns["dSaiEnt"] == null) { dataSet.Tables["ide"].Columns.Add("dSaiEnt"); }
-        if (dataSet.Tables["ide"].Columns["hSaiEnt"] == null) { dataSet.Tables["ide"].Columns.Add("hSaiEnt"); }
+        
 
-        if (dataSet.Tables["emit"].Columns["CPF"] == null) { dataSet.Tables["emit"].Columns.Add("CPF"); }
-        if (dataSet.Tables["emit"].Columns["CNPJ"] == null) { dataSet.Tables["emit"].Columns.Add("CNPJ"); }
-        if (dataSet.Tables["emit"].Columns["IEST"] == null) { dataSet.Tables["emit"].Columns.Add("IEST"); }
-
-        if (dataSet.Tables["enderEmit"].Columns["xCpl"] == null) { dataSet.Tables["enderEmit"].Columns.Add("xCpl"); }
-        if (dataSet.Tables["enderEmit"].Columns["CEP"] == null) { dataSet.Tables["enderEmit"].Columns.Add("CEP"); }
-        if (dataSet.Tables["enderEmit"].Columns["fone"] == null) { dataSet.Tables["enderEmit"].Columns.Add("fone"); }
-
-        if (dataSet.Tables["dest"].Columns["CPF"] == null) { dataSet.Tables["dest"].Columns.Add("CPF"); }
-        if (dataSet.Tables["dest"].Columns["CNPJ"] == null) { dataSet.Tables["dest"].Columns.Add("CNPJ"); }
-        if (dataSet.Tables["dest"].Columns["email"] == null) { dataSet.Tables["dest"].Columns.Add("email"); }
-
-        if (dataSet.Tables["enderDest"].Columns["xCpl"] == null) { dataSet.Tables["enderDest"].Columns.Add("xCpl"); }
-        if (dataSet.Tables["enderDest"].Columns["CEP"] == null) { dataSet.Tables["enderDest"].Columns.Add("CEP"); }
-        if (dataSet.Tables["enderDest"].Columns["fone"] == null) { dataSet.Tables["enderDest"].Columns.Add("fone"); }
-
-        if (dataSet.Tables["ISSQNTot"] == null) { dataSet.Tables.Add("ISSQNTot"); }
-        if (dataSet.Tables["retTrib"] == null) { dataSet.Tables.Add("retTrib"); }
-
-        if (dataSet.Tables["transporta"] == null) { dataSet.Tables.Add("transporta"); }
-        if (dataSet.Tables["transporta"].Columns["CPF"] == null) { dataSet.Tables["transporta"].Columns.Add("CPF"); }
-        if (dataSet.Tables["transporta"].Columns["CNPJ"] == null) { dataSet.Tables["transporta"].Columns.Add("CNPJ"); }
-        if (dataSet.Tables["transporta"].Columns["IE"] == null) { dataSet.Tables["transporta"].Columns.Add("IE"); }
-        if (dataSet.Tables["transporta"].Columns["xNome"] == null) { dataSet.Tables["transporta"].Columns.Add("xNome"); }
-        if (dataSet.Tables["transporta"].Columns["xEnder"] == null) { dataSet.Tables["transporta"].Columns.Add("xEnder"); }
-        if (dataSet.Tables["transporta"].Columns["xMun"] == null) { dataSet.Tables["transporta"].Columns.Add("xMun"); }
-        if (dataSet.Tables["transporta"].Columns["UF"] == null) { dataSet.Tables["transporta"].Columns.Add("UF"); }
-
-        if (dataSet.Tables["veicTransp"] == null) { dataSet.Tables.Add("veicTransp"); }
-        if (dataSet.Tables["veicTransp"].Columns["transp_Id"] == null) { dataSet.Tables["veicTransp"].Columns.Add("transp_Id"); }
-        if (dataSet.Tables["veicTransp"].Columns["RNTC"] == null) { dataSet.Tables["veicTransp"].Columns.Add("RNTC"); }
-        if (dataSet.Tables["veicTransp"].Columns["placa"] == null) { dataSet.Tables["veicTransp"].Columns.Add("placa"); }
-        if (dataSet.Tables["veicTransp"].Columns["UF"] == null) { dataSet.Tables["veicTransp"].Columns.Add("UF"); }
-
-        if (dataSet.Tables["vol"] == null) { dataSet.Tables.Add("vol"); }
-        if (dataSet.Tables["vol"].Columns["qVol"] == null) { dataSet.Tables["vol"].Columns.Add("qVol"); }
-        if (dataSet.Tables["vol"].Columns["esp"] == null) { dataSet.Tables["vol"].Columns.Add("esp"); }
-        if (dataSet.Tables["vol"].Columns["marca"] == null) { dataSet.Tables["vol"].Columns.Add("marca"); }
-        if (dataSet.Tables["vol"].Columns["nVol"] == null) { dataSet.Tables["vol"].Columns.Add("nVol"); }
-        if (dataSet.Tables["vol"].Columns["pesoL"] == null) { dataSet.Tables["vol"].Columns.Add("pesoL"); }
-        if (dataSet.Tables["vol"].Columns["pesoB"] == null) { dataSet.Tables["vol"].Columns.Add("pesoB"); }
-
-        if (dataSet.Tables["cobr"] == null) { dataSet.Tables.Add("cobr"); }
-        if (dataSet.Tables["fat"] == null) { dataSet.Tables.Add("fat"); }
-
-        if (dataSet.Tables["dup"] == null)
+        private string removeFormatacao(string texto)
         {
-            dataSet.Tables.Add("dup");
-            dataSet.Tables["dup"].Columns.Add("nDup");
-            dataSet.Tables["dup"].Columns.Add("dVenc");
-            dataSet.Tables["dup"].Columns.Add("vDup");
+            return string.Join(null, System.Text.RegularExpressions.Regex.Split(texto, "[^\\d]"));
         }
 
-        if (dataSet.Tables["entrega"] == null)
+        public static MemoryStream StringXmlToStreamUTF8(string strXml)
         {
-            dataSet.Tables.Add("entrega");
-            dataSet.Tables["entrega"].Columns.Add("CNPJ");
-            dataSet.Tables["entrega"].Columns.Add("CPF");
-            dataSet.Tables["entrega"].Columns.Add("xLog");
-            dataSet.Tables["entrega"].Columns.Add("nro");
-            dataSet.Tables["entrega"].Columns.Add("xCpl");
-            dataSet.Tables["entrega"].Columns.Add("xBairro");
-            dataSet.Tables["entrega"].Columns.Add("cMun");
-            dataSet.Tables["entrega"].Columns.Add("xMun");
-            dataSet.Tables["entrega"].Columns.Add("UF");
+            var encoding = new UTF8Encoding();
+            var byteArray = encoding.GetBytes(strXml);
+            var memoryStream = new MemoryStream(byteArray);
+            memoryStream.Seek(0, SeekOrigin.Begin);
+
+            return memoryStream;
         }
+        #endregion Auxiliares
 
-        if (dataSet.Tables["infProt"] == null) { dataSet.Tables.Add("infProt"); }
-        if (dataSet.Tables["infProt"].Columns["nProt"] == null) { dataSet.Tables["infProt"].Columns.Add("nProt"); }
-        if (dataSet.Tables["infProt"].Columns["chNFe"] == null) { dataSet.Tables["infProt"].Columns.Add("chNFe"); }
-        if (dataSet.Tables["infProt"].Columns["dhRecbto"] == null) { dataSet.Tables["infProt"].Columns.Add("dhRecbto"); }
-        if (dataSet.Tables["infProt"].Columns["cStat"] == null) { dataSet.Tables["infProt"].Columns.Add("cStat"); }
+        #region Arquivos e Pastas
 
-        if (dataSet.Tables["infAdic"] == null) { dataSet.Tables.Add("infAdic"); }
-        if (dataSet.Tables["infAdic"].Columns["infCpl"] == null) { dataSet.Tables["infAdic"].Columns.Add("infCpl"); }
-        if (dataSet.Tables["infAdic"].Columns["infAdFisco"] == null) { dataSet.Tables["infAdic"].Columns.Add("infAdFisco"); }
+        #region Eventos
 
-        if (dataSet.Tables["obsCont"] == null) { dataSet.Tables.Add("obsCont"); }
-        if (dataSet.Tables["obsFisco"] == null) { dataSet.Tables.Add("obsFisco"); }
-
-        #endregion Validations
-
-        DANFE danfe = new DANFE();
-        danfe.Load(Path.Combine(Environment.CurrentDirectory, "DANFE.rpt"), OpenReportMethod.OpenReportByDefault);
-        ACBr.Net.NFe.DANFE.ImageDataSet imageds = new ACBr.Net.NFe.DANFE.ImageDataSet();
-        imageds.Images.AddImagesRow(Logo(), Barras(nota.NFe.infNFe.Id.Substring(3)), Configuracao.Site, Configuracao.CasasDecimaisQtd, Configuracao.CasasDecimaisValorUnitario);
-        danfe.SetDataSource(dataSet);
-        danfe.Database.Tables["Images"].SetDataSource(imageds);
-        return danfe;
-    }
-
-    public ReportDocument ImprimeCartaCorrecao(TNfeProc nfe, ACBr.Net.NFe.CartaCorrecao.TProcEvento evento)
-    {
-        XDocument doc = XDocument.Load(evento.NomeArquivo);
-        DataSet dataSet = new DataSet();
-        dataSet.ReadXml(doc.CreateReader());
-
-        CartaCorrecao cartaCorrecao = new CartaCorrecao();
-        cartaCorrecao.Load(Path.Combine(Environment.CurrentDirectory, "CartaCorrecao.rpt"), OpenReportMethod.OpenReportByDefault);
-        ACBr.Net.NFe.ImpressaoCartaCorrecao.ImageDataSet imageds = new ACBr.Net.NFe.ImpressaoCartaCorrecao.ImageDataSet();
-        imageds.Images.AddImagesRow(Logo(), Barras(evento.retEvento.infEvento.chNFe), Configuracao.Site);
-
-
-        ACBr.Net.NFe.ImpressaoCartaCorrecao.ImageDataSet.CartaCorrecaoRow row = ((ACBr.Net.NFe.ImpressaoCartaCorrecao.ImageDataSet.CartaCorrecaoRow)(imageds.CartaCorrecao.NewRow()));
-
-        #region Nota Fiscal Eletrônica
-        row.Modelo = Funcoes.ConvertEnumToString(nfe.NFe.infNFe.ide.mod);
-        row.Serie = nfe.NFe.infNFe.ide.serie;
-        row.Numero = nfe.NFe.infNFe.ide.nNF;
-        row.MesAnoEmissao = nfe.NFe.infNFe.ide.dEmi.Substring(5, 2) + "/" + nfe.NFe.infNFe.ide.dEmi.Substring(2, 2);
-        row.ChaveAcesso = nfe.protNFe.infProt.chNFe;
-        #endregion Nota Fiscal Eletrônica
-
-        #region Carta de Correção Eletrônica
-        row.Orgao = Funcoes.ConvertEnumToString(evento.evento.infEvento.cOrgao);
-        row.Ambiente = Funcoes.ConvertEnumToString(evento.evento.infEvento.tpAmb);
-        row.DataHoraEvento = evento.evento.infEvento.dhEvento;
-        row.Evento = Funcoes.ConvertEnumToString(evento.evento.infEvento.tpEvento);
-        row.DescricaoEvento = Funcoes.ConvertEnumToString(evento.evento.infEvento.detEvento.descEvento);
-        row.SequenciaEvento = evento.evento.infEvento.nSeqEvento;
-        row.VersaoEvento = Funcoes.ConvertEnumToString(evento.evento.infEvento.verEvento);
-        row.Status = evento.retEvento.infEvento.cStat + " - " + evento.retEvento.infEvento.xMotivo;
-        row.Protocolo = evento.retEvento.infEvento.nProt;
-        row.DataHoraRegistro = evento.retEvento.infEvento.dhRegEvento;
-        #endregion Carta de Correção Eletrônica
-
-        #region Emitente
-        row.RazaoSocial_Emit = nfe.NFe.infNFe.emit.xNome;
-        row.CNPJCPF_Emit = nfe.NFe.infNFe.emit.Item;
-        row.Endereco_Emit = nfe.NFe.infNFe.emit.enderEmit.xLgr + " " + nfe.NFe.infNFe.emit.enderEmit.nro + " " + nfe.NFe.infNFe.emit.enderEmit.xCpl;
-        row.Bairro_Emit = nfe.NFe.infNFe.emit.enderEmit.xBairro;
-        row.CEP_Emit = nfe.NFe.infNFe.emit.enderEmit.CEP;
-        row.Municipio_Emit = nfe.NFe.infNFe.emit.enderEmit.xMun;
-        row.FoneFax_Emit = nfe.NFe.infNFe.emit.enderEmit.fone;
-        row.Estado_Emit = nfe.NFe.infNFe.emit.enderEmit.UF.ToString();
-        row.IE_Emit = nfe.NFe.infNFe.emit.IE;
-        #endregion Emitente
-
-        #region Destinatário / Remetente
-        row.RazaoSocial_Dest = nfe.NFe.infNFe.dest.xNome;
-        row.CNPJCPF_Dest = nfe.NFe.infNFe.dest.Item;
-        row.Endereco_Dest = nfe.NFe.infNFe.dest.enderDest.xLgr + " " + nfe.NFe.infNFe.dest.enderDest.nro + " " + nfe.NFe.infNFe.dest.enderDest.xCpl;
-        row.Bairro_Dest = nfe.NFe.infNFe.dest.enderDest.xBairro;
-        row.CEP_Dest = nfe.NFe.infNFe.dest.enderDest.CEP;
-        row.Municipio_Dest = nfe.NFe.infNFe.dest.enderDest.xMun;
-        row.FoneFax_Dest = nfe.NFe.infNFe.dest.enderDest.fone;
-        row.Estado_Dest = nfe.NFe.infNFe.dest.enderDest.UF.ToString();
-        row.IE_Dest = nfe.NFe.infNFe.dest.IE;
-        #endregion Destinatário / Remetente
-
-        row.CondicoesUso = Funcoes.ConvertEnumToString(evento.evento.infEvento.detEvento.xCondUso);
-        row.Correcao = evento.evento.infEvento.detEvento.xCorrecao;
-
-        imageds.CartaCorrecao.AddCartaCorrecaoRow(row);
-        cartaCorrecao.SetDataSource(dataSet);
-        cartaCorrecao.Database.Tables["Images"].SetDataSource(imageds);
-        return cartaCorrecao;
-    }
-
-    #endregion Impressão
-
-    #region PDF
-
-    public string GeraPDF(TNfeProc nota)
-    {
-        try
+        public string GetCurrentPathEventos(string cnpjEmpresa, string dataEmissao)
         {
-            string arquivoPDF = nota.NFe.NomeArquivo.Replace(".xml", ".pdf");
-            ReportDocument danfe = ImprimirDANFE(nota);
-            danfe.ExportToDisk(ExportFormatType.PortableDocFormat, arquivoPDF);
-            return arquivoPDF;
-        }
-        catch (Exception ex)
-        {
-            throw new Exception("Erro ao gerar o arquivo do DANFE: " + ex.Message);
-        }
-    }
-
-    public string GeraPDFCartaCorrecao(TNfeProc Nota, ACBr.Net.NFe.CartaCorrecao.TProcEvento evento)
-    {
-        try
-        {
-            string arquivoPDF = evento.NomeArquivo.Replace(".xml", ".pdf");
-            ReportDocument danfe = ImprimeCartaCorrecao(Nota, evento);
-            danfe.ExportToDisk(ExportFormatType.PortableDocFormat, arquivoPDF);
-            return arquivoPDF;
-        }
-        catch (Exception ex)
-        {
-            throw new Exception("Erro ao gerar o arquivo do DANFE: " + ex.Message);
-        }
-    }
-
-    #endregion PDF
-
-    #region Auxiliares
-
-    public static int modulo11(string chaveNFE)
-    {
-        if (chaveNFE.Length != 43)
-        {
-            throw new Exception("Chave inválida, não é possível calcular o digito verificador");
-        }
-
-
-        string baseCalculo = "4329876543298765432987654329876543298765432";
-        int somaResultados = 0;
-
-        for (int i = 0; i <= chaveNFE.Length - 1; i++)
-        {
-            int numNF = Convert.ToInt32(chaveNFE[i].ToString());
-            int numBaseCalculo = Convert.ToInt32(baseCalculo[i].ToString());
-
-            somaResultados += (numBaseCalculo * numNF);
-        }
-
-        int restoDivisao = (somaResultados % 11);
-        int dv = 11 - restoDivisao;
-        if ((dv == 0) || (dv > 9))
-        {
-            return 0;
-        }
-        else
-        {
-            return dv;
-        }
-    }
-
-    private string removeFormatacao(string texto)
-    {
-        return string.Join(null, System.Text.RegularExpressions.Regex.Split(texto, "[^\\d]"));
-    }
-
-    public static MemoryStream StringXmlToStreamUTF8(string strXml)
-    {
-        byte[] byteArray = new byte[strXml.Length];
-        System.Text.UTF8Encoding encoding = new System.Text.UTF8Encoding();
-        byteArray = encoding.GetBytes(strXml);
-        MemoryStream memoryStream = new MemoryStream(byteArray);
-        memoryStream.Seek(0, SeekOrigin.Begin);
-
-        return memoryStream;
-    }
-
-    private byte[] Logo()
-    {
-        if (File.Exists(this.Configuracao.LogoDanfe))
-        {
-            return File.ReadAllBytes(this.Configuracao.LogoDanfe);
-        }
-        else
-        {
-            string path = (new System.Uri(Assembly.GetExecutingAssembly().CodeBase)).AbsolutePath;
-            string caminhoImagem = Path.GetDirectoryName(path) + "/Resources/Imagens/logo.jpg";
-            return File.ReadAllBytes(caminhoImagem);
-        }
-    }
-
-    private byte[] Barras(string chNFe)
-    {
-        using (MemoryStream ms = new MemoryStream())
-        {
-            using (System.Drawing.Image barra = (new Zen.Barcode.Code128BarcodeDraw(Zen.Barcode.Code128Checksum.Instance)).Draw(chNFe, 10))
+            var pastaEventos = GetCurrentPathNFe(cnpjEmpresa, dataEmissao) + "\\Eventos";
+            if (!Directory.Exists(pastaEventos))
             {
-                barra.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
-                return ms.ToArray();
+                Directory.CreateDirectory(pastaEventos);
+            }
+            return pastaEventos;
+        }
+
+        public string GetFileNameEventoCancelamento(Cancelamento.TEventoInfEvento infEvento, string dataEmissao)
+        {
+            var cnpjEmpresa = infEvento.Item;
+            var tipoEvento = Funcoes.ConvertEnumToString(infEvento.tpEvento);
+            var chaveEvento = infEvento.chNFe;
+            var seqEvento = infEvento.nSeqEvento;
+            return GetFileNameEvento(cnpjEmpresa, tipoEvento, chaveEvento, seqEvento, dataEmissao);
+        }
+
+        public string GetFileNameEventoCorrecao(CartaCorrecao.TEventoInfEvento infEvento, string dataEmissao)
+        {
+            var cnpjEmpresa = infEvento.Item;
+            var tipoEvento = Funcoes.ConvertEnumToString(infEvento.tpEvento);
+            var chaveEvento = infEvento.chNFe;
+            var seqEvento = infEvento.nSeqEvento;
+            return GetFileNameEvento(cnpjEmpresa, tipoEvento, chaveEvento, seqEvento, dataEmissao);
+        }
+
+        public string GetFileNameEvento(TEventoInfEvento infEvento, string dataEmissao, string cnpjEmitente)
+        {
+            var cnpjEmpresa = cnpjEmitente;
+            var tipoEvento = infEvento.tpEvento;
+            var chaveEvento = infEvento.chNFe;
+            var seqEvento = infEvento.nSeqEvento;
+            return GetFileNameEvento(cnpjEmpresa, tipoEvento, chaveEvento, seqEvento, dataEmissao);
+        }
+
+        public string GetFileNameEvento(string cnpjEmpresa, string tipoEvento, string chaveEvento, string seqEvento, string dataEmissao)
+        {
+            return GetCurrentPathEventos(cnpjEmpresa, dataEmissao) + "\\" + tipoEvento + "-" + chaveEvento + "-" + seqEvento + "-procEventoNfe.xml";
+        }
+
+        public void SalvarEventoCancelamento(ref Cancelamento.TProcEvento procEvento, string dataEmissao)
+        {
+            procEvento.NomeArquivo = GetFileNameEventoCancelamento(procEvento.evento.infEvento, dataEmissao);
+            procEvento.ArquivoXML = SaveXml(procEvento.Serialize(), procEvento.NomeArquivo);
+        }
+
+        public void SalvarEventoCorrecao(ref CartaCorrecao.TProcEvento procEvento, string dataEmissao)
+        {
+            procEvento.NomeArquivo = GetFileNameEventoCorrecao(procEvento.evento.infEvento, dataEmissao);
+            procEvento.ArquivoXML = SaveXml(procEvento.Serialize(), procEvento.NomeArquivo);
+        }
+
+        public void SalvarEvento(ref TProcEvento procEvento, string dataEmissao, string cnpjEmitente)
+        {
+            procEvento.NomeArquivo = GetFileNameEvento(procEvento.evento.infEvento, dataEmissao, cnpjEmitente);
+            procEvento.ArquivoXML = SaveXml(procEvento.Serialize(), procEvento.NomeArquivo);
+        }
+
+        #endregion Eventos
+
+        #region Notas Fiscais Eletrônicas
+
+        public string GetCurrentPathNFe(string cnpjEmpresa, string dataEmissao)
+        {
+            var ano = dataEmissao.Substring(0, 4);
+            var mes = dataEmissao.Substring(5, 2);
+            var pasta = Configuracao.PastaEmitidas + cnpjEmpresa + "\\" + ano + mes;
+            if (!Directory.Exists(pasta))
+            {
+                Directory.CreateDirectory(pasta);
+            }
+            return pasta;
+        }
+
+        public string GetFileNameNFe(TNFeInfNFe infNFe)
+        {
+            var cnpjEmpresa = infNFe.emit.Item;
+            var chaveNFe = infNFe.Id.Substring(3);
+            var dataEmissao = infNFe.ide.dEmi;
+            return GetCurrentPathNFe(cnpjEmpresa, dataEmissao) + "\\" + chaveNFe + "-nfe.xml";
+        }
+
+        public void SalvarNFe(ref TNfeProc nota)
+        {
+            nota.NFe.NomeArquivo = GetFileNameNFe(nota.NFe.infNFe);
+            nota.NFe.ArquivoXML = SaveXml(nota.Serialize(), nota.NFe.NomeArquivo);
+        }
+
+        #endregion Notas Fiscais Eletrônicas
+
+        public XmlDocument SaveXml(string xml, string fileName)
+        {
+            XmlTextWriter xtw = null;
+            try
+            {
+                var dInfo = Directory.GetParent(fileName);
+                if (!dInfo.Exists)
+                {
+                    dInfo.Create();
+                }
+                xtw = new XmlTextWriter(fileName, Encoding.UTF8);
+                var xd = new XmlDocument();
+                xd.LoadXml(Funcoes.RemoveNameSpaceFromXml(xml));
+                xd.Save(xtw);
+                return xd;
+            }
+            finally
+            {
+                if ((xtw != null))
+                {
+                    xtw.Flush();
+                    xtw.Close();
+                }
             }
         }
+
+        #endregion Arquivos e Pastas
     }
-
-    #endregion Auxiliares
-
-    #region Arquivos e Pastas
-
-    #region Eventos
-
-    public string getCurrentPathEventos(string cnpjEmpresa, string dataEmissao)
-    {
-        string pastaEventos = getCurrentPathNFe(cnpjEmpresa, dataEmissao) + "\\Eventos";
-        if (!Directory.Exists(pastaEventos))
-        {
-            Directory.CreateDirectory(pastaEventos);
-        }
-        return pastaEventos;
-    }
-
-    public string getFileNameEventoCancelamento(ACBr.Net.NFe.Cancelamento.TEventoInfEvento infEvento, string dataEmissao)
-    {
-        string cnpjEmpresa = infEvento.Item;
-        string tipoEvento = Funcoes.ConvertEnumToString(infEvento.tpEvento);
-        string chaveEvento = infEvento.chNFe;
-        string seqEvento = infEvento.nSeqEvento;
-        return getFileNameEvento(cnpjEmpresa, tipoEvento, chaveEvento, seqEvento, dataEmissao);
-    }
-
-    public string getFileNameEventoCorrecao(ACBr.Net.NFe.CartaCorrecao.TEventoInfEvento infEvento, string dataEmissao)
-    {
-        string cnpjEmpresa = infEvento.Item;
-        string tipoEvento = Funcoes.ConvertEnumToString(infEvento.tpEvento);
-        string chaveEvento = infEvento.chNFe;
-        string seqEvento = infEvento.nSeqEvento;
-        return getFileNameEvento(cnpjEmpresa, tipoEvento, chaveEvento, seqEvento, dataEmissao);
-    }
-
-    public string getFileNameEvento(TEventoInfEvento infEvento, string dataEmissao, string cnpjEmitente)
-    {
-        string cnpjEmpresa = cnpjEmitente;
-        string tipoEvento = infEvento.tpEvento;
-        string chaveEvento = infEvento.chNFe;
-        string seqEvento = infEvento.nSeqEvento;
-        return getFileNameEvento(cnpjEmpresa, tipoEvento, chaveEvento, seqEvento, dataEmissao);
-    }
-
-    public string getFileNameEvento(string cnpjEmpresa, string tipoEvento, string chaveEvento, string seqEvento, string dataEmissao)
-    {
-        return getCurrentPathEventos(cnpjEmpresa, dataEmissao) + "\\" + tipoEvento + "-" + chaveEvento + "-" + seqEvento + "-procEventoNfe.xml";
-    }
-
-    public void SalvarEventoCancelamento(ref ACBr.Net.NFe.Cancelamento.TProcEvento procEvento, string dataEmissao)
-    {
-        procEvento.NomeArquivo = getFileNameEventoCancelamento(procEvento.evento.infEvento, dataEmissao);
-        procEvento.ArquivoXML = saveXml(procEvento.Serialize(), procEvento.NomeArquivo);
-    }
-
-    public void SalvarEventoCorrecao(ref ACBr.Net.NFe.CartaCorrecao.TProcEvento procEvento, string dataEmissao)
-    {
-        procEvento.NomeArquivo = getFileNameEventoCorrecao(procEvento.evento.infEvento, dataEmissao);
-        procEvento.ArquivoXML = saveXml(procEvento.Serialize(), procEvento.NomeArquivo);
-    }
-
-    public void SalvarEvento(ref TProcEvento procEvento, string dataEmissao, string cnpjEmitente)
-    {
-        procEvento.NomeArquivo = getFileNameEvento(procEvento.evento.infEvento, dataEmissao, cnpjEmitente);
-        procEvento.ArquivoXML = saveXml(procEvento.Serialize(), procEvento.NomeArquivo);
-    }
-
-    #endregion Eventos
-
-    #region Notas Fiscais Eletrônicas
-
-    public string getCurrentPathNFe(string cnpjEmpresa, string dataEmissao)
-    {
-        string ano = dataEmissao.Substring(0, 4);
-        string mes = dataEmissao.Substring(5, 2);
-        string pasta = Configuracao.PastaEmitidas + cnpjEmpresa + "\\" + ano + mes;
-        if (!Directory.Exists(pasta))
-        {
-            Directory.CreateDirectory(pasta);
-        }
-        return pasta;
-    }
-
-    public string getFileNameNFe(TNFeInfNFe infNFe)
-    {
-        string cnpjEmpresa = infNFe.emit.Item;
-        string chaveNFe = infNFe.Id.Substring(3);
-        string dataEmissao = infNFe.ide.dEmi;
-        return getCurrentPathNFe(cnpjEmpresa, dataEmissao) + "\\" + chaveNFe + "-nfe.xml";
-    }
-
-    public void SalvarNFe(ref TNfeProc nota)
-    {
-        nota.NFe.NomeArquivo = getFileNameNFe(nota.NFe.infNFe);
-        nota.NFe.ArquivoXML = saveXml(nota.Serialize(), nota.NFe.NomeArquivo);
-    }
-
-    #endregion Notas Fiscais Eletrônicas
-
-    public XmlDocument saveXml(string xml, string fileName)
-    {
-        XmlTextWriter xtw = null;
-        try
-        {
-            DirectoryInfo dInfo = Directory.GetParent(fileName);
-            if (!dInfo.Exists)
-            {
-                dInfo.Create();
-            }
-            xtw = new XmlTextWriter(fileName, Encoding.UTF8);
-            XmlDocument xd = new XmlDocument();
-            xd.LoadXml(Funcoes.RemoveNameSpaceFromXml(xml));
-            xd.Save(xtw);
-            return xd;
-        }
-        finally
-        {
-            if ((xtw != null))
-            {
-                xtw.Flush();
-                xtw.Close();
-            }
-        }
-    }
-
-    #endregion Arquivos e Pastas
-}
-
-
-public enum StatusNFe
-{
-    Inicializada,
-    ArquivoGerado,
-    Assinada,
-    Validada,
-    Emitida,
-    Cancelada
 }

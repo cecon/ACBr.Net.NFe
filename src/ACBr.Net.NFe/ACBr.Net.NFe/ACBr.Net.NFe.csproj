@@ -122,6 +122,13 @@
     <Compile Include="obj\Debug\TemporaryGeneratedFile_5937a670-0e60-4077-877b-f7221da3dda1.cs" />
     <Compile Include="obj\Debug\TemporaryGeneratedFile_E7A71F73-0F8D-4B9B-B56E-8E70B10BC5D3.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="StatusNFe.cs" />
+    <Compile Include="Util\Barras.cs" />
+    <Compile Include="Util\Digit.cs" />
+    <Compile Include="Util\Logo.cs" />
+    <Compile Include="Util\NfeConvert.cs" />
+    <Compile Include="Util\Print.cs" />
+    <Compile Include="Util\XmlIcmsCreator.cs" />
     <Compile Include="Webservice\NfeCancelamento2.cs" />
     <Compile Include="Webservice\NFeConsulta2.cs" />
     <Compile Include="Webservice\NfeDownloadNF.cs" />
